@@ -28,44 +28,36 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
   };
 
   const register = async () => {
-    if (password !== confirmPassword) {
-      setIsPasswordWrong(true);
-      return;
-    }
-    if (fName && email && password) {
-      const data = {
-        first_name: fName,
-        last_name: lName,
-        email: email,
-        password: password,
-      };
-      try {
-        const response = await api.post("auth/register/", data);
-        if (response.status === 201) {
-          Cookies.set("token", response.data.access_token);
-          Cookies.set("admin", response.data.admin);
-          // router.push("/");
-          window.location.href = "/"; // to reload
-        }
-      } catch (error: unknown) {
-        let response;
-        if (
-          typeof error === "object" &&
-          error !== null &&
-          "response" in error
-        ) {
-          response = (
-            error as {
-              response: {
-                data?: { detail?: string };
-                status?: number;
-                statusText?: string;
-              };
-            }
-          ).response;
-        } else {
-          return errorAlert("Something wrong");
-        }
+    if (password !== confirmPassword) return setIsPasswordWrong(true);
+    if (!(fName && email && password))
+      return errorAlert("Enter required fields");
+
+    const data = {
+      first_name: fName,
+      last_name: lName,
+      email: email,
+      password: password,
+    };
+    try {
+      const response = await api.post("auth/register/", data);
+      if (response.status === 201) {
+        Cookies.set("token", response.data.access_token);
+        Cookies.set("admin", response.data.admin);
+        // router.push("/");
+        window.location.href = "/"; // to reload
+      }
+    } catch (error: unknown) {
+      let response;
+      if (typeof error === "object" && error !== null && "response" in error) {
+        response = (
+          error as {
+            response: {
+              data?: { detail?: string };
+              status?: number;
+              statusText?: string;
+            };
+          }
+        ).response;
         return errorAlert(
           response?.data?.detail ||
             (response?.statusText
@@ -73,21 +65,43 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
               : "Something wrong")
         );
       }
+      errorAlert("Something wrong");
     }
   };
 
   const login = async () => {
-    if (email && password) {
+    if (!(email && password)) return errorAlert("Enter required fields");
+    try {
       const response = await api.post("auth/login/", {
         email,
         password,
       });
+      console.log(response);
       if (response.status === 200) {
         Cookies.set("token", response.data.access_token);
         Cookies.set("admin", response.data.admin);
         // router.push("/");
         window.location.href = "/"; // to reload
       }
+    } catch (error) {
+      if (typeof error === "object" && error !== null && "response" in error) {
+        const response = (
+          error as {
+            response: {
+              data?: { detail?: string };
+              status?: number;
+              statusText?: string;
+            };
+          }
+        ).response;
+        return errorAlert(
+          response?.data?.detail ||
+            (response?.statusText
+              ? `[${response?.status}] ${response?.statusText}`
+              : "Something wrong")
+        );
+      }
+      errorAlert("Something wrong");
     }
   };
 
