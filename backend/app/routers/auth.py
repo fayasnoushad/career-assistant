@@ -1,21 +1,22 @@
+import aiosmtplib
 from .. import schemas
 from ..database import db
 from typing import Optional
 from jose import jwt, JWTError
+from email.message import EmailMessage
 from passlib.hash import sha256_crypt
 from datetime import datetime, timedelta, timezone
-from fastapi import (
-    APIRouter,
-    Depends,
-    HTTPException,
-    status,
-)
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from ..configs import (
     SECRET_KEY,
     ALGORITHM,
     ACCESS_TOKEN_EXPIRE_MINUTES,
     SUPER_ADMINS,
+    EMAIL_USER,
+    EMAIL_PASS,
+    EMAIL_TOKEN_EXPIRE_HOURS,
+    DOMAIN,
 )
 
 router = APIRouter(prefix="/auth", tags=["auth", "authentication"])
@@ -33,6 +34,13 @@ def verify_token(token: str):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or expired token",
         )
+
+
+def create_verification_token(email: str):
+    expires_hours = EMAIL_TOKEN_EXPIRE_HOURS
+    expire = datetime.now(timezone.utc) + timedelta(hours=expires_hours)
+    data = {"sub": email, "exp": expire}
+    return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 
 
 def create_access_token(
@@ -72,13 +80,30 @@ def require_super_admin(user=Depends(get_current_user)):
     raise HTTPException(status_code=403, detail="Super admin access required")
 
 
-@router.post("/register/", response_model=schemas.Token, status_code=201)
+async def send_verification_email(to_email: str, token: str):
+    verify_link = f"http://{DOMAIN}/verify?token={token}"
+    message = EmailMessage()
+    message["From"] = EMAIL_USER
+    message["To"] = to_email
+    message["Subject"] = "Verify your email"
+    message.set_content(f"Click the link to verify your account: {verify_link}")
+    await aiosmtplib.send(
+        message,
+        hostname="smtp.gmail.com",
+        port=587,
+        start_tls=True,
+        username=EMAIL_USER,
+        password=EMAIL_PASS,
+    )
+
+
+@router.post("/register/")
 async def register_user(user: schemas.UserCreate):
     admin = user.email in SUPER_ADMINS
-    user_exists = await db.get_user(user.email)
-    if user_exists:
+    existing_user = await db.get_user(user.email)
+    if existing_user and existing_user.get("verified"):
         raise HTTPException(status_code=409, detail="User already exists")
-    await db.add_user(
+    await db.add_pending_user(
         dict(
             first_name=user.first_name,
             last_name=user.last_name,
@@ -87,14 +112,31 @@ async def register_user(user: schemas.UserCreate):
             admin=admin,
         )
     )
-    role = "admin" if admin else "user"
+    token = create_verification_token(user.email)
+    await send_verification_email(user.email, token)
+
+
+def get_token(user, email) -> schemas.Token:
+    role = "admin" if user["admin"] else "user"
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user.email}, role=role, expires_delta=access_token_expires
+        data={"sub": email}, role=role, expires_delta=access_token_expires
     )
     return schemas.Token(
         access_token=access_token, token_type="bearer", admin=(role == "admin")
     )
+
+
+@router.get("/verify", status_code=201, response_model=schemas.Token)
+async def verify_email(token: str):
+    payload = verify_token(token)
+    email = payload.get("sub")
+    if not email:
+        raise HTTPException(status_code=400, detail="Invalid or expired token")
+    user = await db.verify_user(email)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return get_token(user, email)
 
 
 @router.post("/login/", response_model=schemas.Token)
@@ -114,14 +156,7 @@ async def login_for_access_token(user_data: schemas.UserLogin):
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    role = "admin" if user["admin"] else "user"
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": email}, role=role, expires_delta=access_token_expires
-    )
-    return schemas.Token(
-        access_token=access_token, token_type="bearer", admin=(role == "admin")
-    )
+    return get_token(user, email)
 
 
 @router.get("/check/", response_model=schemas.LoginStatus)

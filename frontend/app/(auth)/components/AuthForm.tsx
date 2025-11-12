@@ -3,14 +3,17 @@ import Cookies from "js-cookie";
 import { useState } from "react";
 import Link from "next/link";
 import api from "@/app/helpers/api";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import handleError from "../helpers/handle-error";
+import AuthModal from "./AuthModal";
+import modalAlert from "../helpers/modal-alert";
 
 interface AuthFormProps {
   registerStatus: boolean;
 }
 
 export default function AuthForm({ registerStatus }: AuthFormProps) {
-  // const router = useRouter();
+  const router = useRouter();
   const [fName, setFName] = useState("");
   const [lName, setLName] = useState("");
   const [email, setEmail] = useState("");
@@ -19,18 +22,10 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
   const [isPasswordWrong, setIsPasswordWrong] = useState(false);
   const [modalText, setModalText] = useState("");
 
-  const errorAlert = (text: string) => {
-    setModalText(text);
-    const modal = document.getElementById("auth-modal");
-    if (modal) {
-      (modal as HTMLDialogElement).showModal();
-    }
-  };
-
+  const raise = (text: string) => modalAlert(text, setModalText);
   const register = async () => {
     if (password !== confirmPassword) return setIsPasswordWrong(true);
-    if (!(fName && email && password))
-      return errorAlert("Enter required fields");
+    if (!(fName && email && password)) return raise("Enter required fields");
 
     const data = {
       first_name: fName,
@@ -40,43 +35,21 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
     };
     try {
       const response = await api.post("auth/register/", data);
-      if (response.status === 201) {
-        Cookies.set("token", response.data.access_token);
-        Cookies.set("admin", response.data.admin);
-        // router.push("/");
-        window.location.href = "/"; // to reload
+      if (response.status === 200) {
+        router.push("/pending");
       }
     } catch (error: unknown) {
-      let response;
-      if (typeof error === "object" && error !== null && "response" in error) {
-        response = (
-          error as {
-            response: {
-              data?: { detail?: string };
-              status?: number;
-              statusText?: string;
-            };
-          }
-        ).response;
-        return errorAlert(
-          response?.data?.detail ||
-            (response?.statusText
-              ? `[${response?.status}] ${response?.statusText}`
-              : "Something wrong")
-        );
-      }
-      errorAlert("Something wrong");
+      handleError(error, setModalText);
     }
   };
 
   const login = async () => {
-    if (!(email && password)) return errorAlert("Enter required fields");
+    if (!(email && password)) return raise("Enter required fields");
     try {
       const response = await api.post("auth/login/", {
         email,
         password,
       });
-      console.log(response);
       if (response.status === 200) {
         Cookies.set("token", response.data.access_token);
         Cookies.set("admin", response.data.admin);
@@ -84,24 +57,7 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
         window.location.href = "/"; // to reload
       }
     } catch (error) {
-      if (typeof error === "object" && error !== null && "response" in error) {
-        const response = (
-          error as {
-            response: {
-              data?: { detail?: string };
-              status?: number;
-              statusText?: string;
-            };
-          }
-        ).response;
-        return errorAlert(
-          response?.data?.detail ||
-            (response?.statusText
-              ? `[${response?.status}] ${response?.statusText}`
-              : "Something wrong")
-        );
-      }
-      errorAlert("Something wrong");
+      handleError(error, setModalText);
     }
   };
 
@@ -250,17 +206,7 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
           </Link>
         </div>
       </form>
-
-      <dialog id="auth-modal" className="modal">
-        <div className="modal-box md:min-w-3/5">
-          <p className="m-2 mt-4 md:m-4 lg:mx-6">{modalText}</p>
-          <div className="modal-action flex justify-center md:justify-end">
-            <form method="dialog">
-              <button className="btn btn-soft rounded-lg">Close</button>
-            </form>
-          </div>
-        </div>
-      </dialog>
+      <AuthModal modalText={modalText} />
     </>
   );
 }
