@@ -1,5 +1,6 @@
 import re
 from . import schemas
+from bson.objectid import ObjectId
 from typing import List, Optional
 from pymongo import AsyncMongoClient
 from .configs import DB_NAME, DB_URL
@@ -21,8 +22,12 @@ class Database:
         await self.pending_users.delete_many({"email": user["email"]})
         await self.pending_users.insert_one(user)
 
-    async def get_user(self, email: str):
-        user = await self.users.find_one({"email": email})
+    async def get_user(self, user_id: str = "", email: str = ""):
+        if not user_id and not email:
+            return
+        user = await self.users.find_one(
+            {"_id": ObjectId(user_id)} if user_id else {"email": email}
+        )
         if user:
             user["id"] = str(user["_id"])
             user.pop("_id", None)
@@ -34,9 +39,9 @@ class Database:
         await self.pending_users.delete_many({"email": email})
         return user
 
-    async def update_user(self, email: str, data: schemas.UserUpdate):
+    async def update_user(self, user_id: str, data: schemas.UserUpdate):
         await self.users.update_one(
-            {"email": email},
+            {"_id": ObjectId(user_id)},
             {
                 "$set": {
                     "first_name": data.first_name,
@@ -46,8 +51,8 @@ class Database:
             },
         )
 
-    async def get_api(self, email: str) -> Optional[str]:
-        user = await self.users.find_one({"email": email})
+    async def get_api(self, user_id: str) -> Optional[str]:
+        user = await self.users.find_one({"_id": ObjectId(user_id)})
         return user.get("gemini_api") if user else None
 
     async def add_courses(self, courses: List[dict]):

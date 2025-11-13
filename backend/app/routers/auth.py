@@ -38,9 +38,12 @@ def verify_token(token: str):
 
 
 def create_verification_token(email: str):
+    """
+    Only for registering an user account
+    """
     expires_hours = EMAIL_TOKEN_EXPIRE_HOURS
     expire = datetime.now(timezone.utc) + timedelta(hours=expires_hours)
-    data = {"sub": email, "exp": expire}
+    data = {"sub": email, "exp": expire}  # when registering email is the subject
     return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
 
 
@@ -49,6 +52,9 @@ def create_access_token(
     role: str = "user",
     expires_delta: Optional[timedelta] = None,
 ):
+    """
+    Access token is used for identifying user
+    """
     secret_key = SECRET_KEY
     to_encode = data.copy()
     to_encode["admin"] = role == "admin"
@@ -122,11 +128,11 @@ async def register_user(user: schemas.UserCreate):
     await send_verification_email(user.email, token)
 
 
-def get_token(user, email) -> schemas.Token:
+def get_token(user) -> schemas.Token:
     role = "admin" if user["admin"] else "user"
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": email}, role=role, expires_delta=access_token_expires
+        data={"sub": user["id"]}, role=role, expires_delta=access_token_expires
     )
     return schemas.Token(
         access_token=access_token, token_type="bearer", admin=(role == "admin")
@@ -135,6 +141,11 @@ def get_token(user, email) -> schemas.Token:
 
 @router.get("/verify", status_code=201, response_model=schemas.Token)
 async def verify_email(token: str):
+    """
+    This function is for verifying email with verification token
+
+    Returns: Access token when verified
+    """
     payload = verify_token(token)
     email = payload.get("sub")
     if not email:
@@ -142,7 +153,7 @@ async def verify_email(token: str):
     user = await db.verify_user(email)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return get_token(user, email)
+    return get_token(user)
 
 
 @router.post("/login/", response_model=schemas.Token)
@@ -162,7 +173,7 @@ async def login_for_access_token(user_data: schemas.UserLogin):
             detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return get_token(user, email)
+    return get_token(user)
 
 
 @router.get("/check/", response_model=schemas.LoginStatus)
@@ -179,10 +190,10 @@ def login_status_check(token: str = Depends(oauth2_scheme)):
 @router.post("/details/", response_model=schemas.User)
 async def get_user_details(token: str = Depends(oauth2_scheme)):
     payload = verify_token(token)
-    email = payload.get("sub")
-    if email is None:
+    user_id = payload.get("sub")
+    if user_id is None:
         raise HTTPException(status_code=400, detail="Email not found in token")
-    user_data = await db.get_user(email=email)
+    user_data = await db.get_user(user_id=user_id)
     if not user_data:
         raise HTTPException(status_code=404, detail="User not found")
     return schemas.User(**user_data)
@@ -193,7 +204,7 @@ async def update_user_details(
     user_data: schemas.UserUpdate, token: str = Depends(oauth2_scheme)
 ):
     payload = verify_token(token)
-    email = payload.get("sub")
-    if email is None:
+    user_id = payload.get("sub")
+    if user_id is None:
         raise HTTPException(status_code=400, detail="Email not found in token")
-    return await db.update_user(email=email, data=user_data)
+    return await db.update_user(user_id, data=user_data)
