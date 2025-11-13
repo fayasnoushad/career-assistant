@@ -49,26 +49,20 @@ export default function Header() {
         )}
         <ThemeMode />
         {loginStatus && (
-          <div className="dropdown dropdown-end">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost rounded-field"
-            >
-              <div className="avatar">
-                <div className="ring-primary ring-offset-base-100 w-12 rounded-full ring-2 ring-offset-2">
-                  <img src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp" />
-                </div>
+          <div className="dropdown dropdown-end cursor-pointer">
+            <div className="avatar" tabIndex={0} role="button">
+              <div className="ring-primary ring-offset-base-100 w-12 rounded-full ring-2 ring-offset-2 hover:opacity-[0.8]">
+                <img src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp" />
               </div>
             </div>
             <ul
               tabIndex={-1}
               className="menu dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 shadow-sm"
             >
-              <Link href="/settings" className="btn btn-ghost">
+              <Link href="/settings" className="btn btn-ghost rounded-lg">
                 Settings
               </Link>
-              <Link href="/logout" className="btn btn-ghost">
+              <Link href="/logout" className="btn btn-ghost rounded-lg">
                 Logout
               </Link>
             </ul>

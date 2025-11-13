@@ -1,5 +1,6 @@
 import aiosmtplib
 from .. import schemas
+from pathlib import Path
 from ..database import db
 from typing import Optional
 from jose import jwt, JWTError
@@ -87,6 +88,11 @@ async def send_verification_email(to_email: str, token: str):
     message["To"] = to_email
     message["Subject"] = "Verify your email"
     message.set_content(f"Click the link to verify your account: {verify_link}")
+    template_path = Path(__file__).resolve().parent.parent / "templates" / "verify.html"
+    html_content = template_path.read_text(encoding="utf-8").format(
+        verify_link=verify_link
+    )
+    message.add_alternative(html_content, subtype="html")
     await aiosmtplib.send(
         message,
         hostname="smtp.gmail.com",
