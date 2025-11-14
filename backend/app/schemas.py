@@ -46,7 +46,12 @@ class Name(BaseModel):
     name: str
 
 
+class Id(BaseModel):
+    id: str
+
+
 class Course(BaseModel):
+    id: str
     title: str
     channel: str
     channel_link: str

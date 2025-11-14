@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import Form from "./components/Form/Form";
-import Cards from "./components/Cards/Cards";
-import Loading from "./../components/Loading/Loading";
-import Roadmap from "./components/Roadmap/Roadmap";
+import Form from "../components/Form/Form";
+import Cards from "../components/Cards/Cards";
+import Loading from "../../components/Loading/Loading";
+import Roadmap from "../components/Roadmap/Roadmap";
 
 export default function Courses() {
   const [courses, setCourses] = useState([]);

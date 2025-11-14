@@ -59,6 +59,9 @@ export default function Header() {
               tabIndex={-1}
               className="menu dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 shadow-sm"
             >
+              <Link href="/saved" className="btn btn-ghost rounded-lg">
+                Saved Courses
+              </Link>
               <Link href="/settings" className="btn btn-ghost rounded-lg">
                 Settings
               </Link>

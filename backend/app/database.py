@@ -13,6 +13,7 @@ class Database:
         self.users = self.db["users"]
         self.pending_users = self.db["pending_users"]
         self.courses = self.db["courses"]
+        self.saved_courses = self.db["saved_courses"]
         self.cache = {}
 
     async def add_user(self, user):
@@ -63,8 +64,33 @@ class Database:
         async for course in self.courses.find(
             {"title": {"$regex": re.escape(name), "$options": "i"}}
         ):
+            course["id"] = str(course["_id"])
             del course["_id"]
             courses.append(course)
+        return courses
+
+    async def save_course(self, course_id, user_id):
+        await self.unsave_course(course_id, user_id)
+        await self.saved_courses.insert_one(
+            {"course_id": ObjectId(course_id), "user_id": ObjectId(user_id)}
+        )
+
+    async def unsave_course(self, course_id, user_id):
+        await self.saved_courses.delete_one(
+            {"course_id": ObjectId(course_id), "user_id": ObjectId(user_id)}
+        )
+
+    async def get_saved_courses(self, user_id):
+        courses = []
+        async for saved_course in self.saved_courses.find(
+            {"user_id": ObjectId(user_id)}
+        ):
+            course_id = saved_course["course_id"]
+            course = await self.courses.find_one({"_id": course_id})
+            if course:
+                course["id"] = str(course_id)
+                del course["_id"]
+                courses.append(course)
         return courses
 
 
