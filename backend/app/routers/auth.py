@@ -88,7 +88,7 @@ def require_super_admin(user=Depends(get_current_user)):
 
 
 async def send_verification_email(to_email: str, token: str):
-    verify_link = f"http://{DOMAIN}/verify?token={token}"
+    verify_link = f"http://{DOMAIN}/verify/?token={token}"
     message = EmailMessage()
     message["From"] = EMAIL_USER
     message["To"] = to_email
@@ -139,7 +139,7 @@ def get_token(user) -> schemas.Token:
     )
 
 
-@router.get("/verify", status_code=201, response_model=schemas.Token)
+@router.get("/verify/", status_code=201, response_model=schemas.Token)
 async def verify_email(token: str):
     """
     This function is for verifying email with verification token
@@ -199,7 +199,7 @@ async def get_user_details(token: str = Depends(oauth2_scheme)):
     return schemas.User(**user_data)
 
 
-@router.patch("/update")
+@router.patch("/update/")
 async def update_user_details(
     user_data: schemas.UserUpdate, token: str = Depends(oauth2_scheme)
 ):

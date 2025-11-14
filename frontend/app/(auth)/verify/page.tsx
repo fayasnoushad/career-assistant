@@ -15,7 +15,7 @@ export default function VerifyAccount() {
   const verify = async () => {
     const params = { token };
     try {
-      const response = await api.get("auth/verify/", { params });
+      const response = await api.get("/auth/verify/", { params });
       if (response.status === 201) {
         Cookies.set("token", response.data.access_token);
         Cookies.set("admin", response.data.admin);

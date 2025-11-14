@@ -31,7 +31,7 @@ export default function Roadmap({
     if (name in cache) {
       setContent(cache[name]);
     } else {
-      const response = await api.post("courses/category/", { names: [name] });
+      const response = await api.post("/courses/category/", { names: [name] });
       setContent(response.data.courses);
       setCache((prevCache) => ({
         ...prevCache,

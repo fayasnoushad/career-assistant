@@ -30,7 +30,7 @@ async def get_course_details_by_category(details: schemas.Name):
     return courses
 
 
-@router.post("/save")
+@router.post("/save/")
 async def save_course(
     details: schemas.Id,
     token: str = Depends(oauth2_scheme),
@@ -43,7 +43,7 @@ async def save_course(
     await db.save_course(course_id, user_id)
 
 
-@router.post("/unsave")
+@router.post("/unsave/")
 async def unsave_course(
     details: schemas.Id,
     token: str = Depends(oauth2_scheme),
@@ -56,7 +56,7 @@ async def unsave_course(
     await db.unsave_course(course_id, user_id)
 
 
-@router.get("/saved_courses", response_model=schemas.Courses)
+@router.get("/saved_courses/", response_model=schemas.Courses)
 async def get_saved_courses(token: str = Depends(oauth2_scheme)):
     payload = verify_token(token)
     user_id = payload.get("sub")

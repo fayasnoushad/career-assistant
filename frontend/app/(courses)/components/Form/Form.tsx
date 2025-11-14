@@ -24,7 +24,7 @@ export default function Form({ setContent, setCourses, setLoading }: Props) {
     if (token) setLogin(true);
     else return;
     const fetchApiDetails = async () => {
-      const response = await api.post("auth/details/");
+      const response = await api.post("/auth/details/");
       const user = response.data;
       setHaveApi(user.gemini_api && true);
     };
@@ -37,7 +37,7 @@ export default function Form({ setContent, setCourses, setLoading }: Props) {
     setContent([]);
     setCourses([]);
     setLoading(true);
-    const endpoint = "courses/" + (promptForm ? "prompt/" : "category/");
+    const endpoint = "/courses/" + (promptForm ? "prompt/" : "category/");
     const response = await api.post(endpoint, { ...formData });
 
     if (promptForm) setContent(response.data.roadmaps);

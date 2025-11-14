@@ -34,7 +34,7 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
       password: password,
     };
     try {
-      const response = await api.post("auth/register/", data);
+      const response = await api.post("/auth/register/", data);
       if (response.status === 200) {
         router.push("/pending");
       }
@@ -46,7 +46,7 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
   const login = async () => {
     if (!(email && password)) return raise("Enter required fields");
     try {
-      const response = await api.post("auth/login/", {
+      const response = await api.post("/auth/login/", {
         email,
         password,
       });

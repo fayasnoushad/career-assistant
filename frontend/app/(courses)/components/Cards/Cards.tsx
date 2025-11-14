@@ -29,7 +29,7 @@ function CourseCard({
 
   const toggleSaved = async () => {
     isSaved((prevSaved) => !prevSaved);
-    await api.post(`courses/${saved ? "unsave" : "save"}`, { id: course.id });
+    await api.post(`/courses/${saved ? "unsave" : "save"}/`, { id: course.id });
   };
 
   return (
@@ -89,7 +89,7 @@ export default function Cards({
   const [savedCourses, setSavedCourses] = useState(new Set());
   useEffect(() => {
     const fetchCourses = async () => {
-      const response = await api.get("courses/saved_courses");
+      const response = await api.get("/courses/saved_courses/");
       const savedCourseSet = new Set();
       response.data.courses.map((savedCourse: CourseType) =>
         savedCourseSet.add(savedCourse.id)

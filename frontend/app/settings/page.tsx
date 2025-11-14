@@ -9,7 +9,7 @@ export default function Settings() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await api.post("auth/details/");
+      const response = await api.post("/auth/details/");
       const user = response.data;
       setFName(user.first_name ?? "");
       setLName(user.last_name ?? "");
@@ -25,7 +25,7 @@ export default function Settings() {
       last_name: lName,
       gemini_api: apiKey,
     };
-    await api.patch("auth/update/", data);
+    await api.patch("/auth/update/", data);
     alert("Updated Successfully");
   };
 
