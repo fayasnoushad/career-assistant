@@ -29,19 +29,19 @@ export default function Header() {
 
   return (
     <header className="min-h-[10vh] py-4 px-2 md:px-7 w-auto bg-base-300 flex flex-col md:flex md:flex-row justify-center items-center">
-      <Link href="/" className="text-3xl font-bold md:w-[50%] my-2">
+      <Link href="/" className="text-2xl font-bold md:w-[50%] my-2">
         Career Assistant
       </Link>
-      <div className="flex flex-row justify-center items-center md:ml-auto gap-7 font-bold my-2">
+      <div className="flex flex-row justify-center items-center md:ml-auto gap-5 font-bold my-2">
         <Link
-          className="btn btn-outline rounded font-bold text-lg"
+          className="btn btn-ghost rounded-lg font-bold text-lg"
           href="/courses/"
         >
           Courses
         </Link>
         {!loginStatus && (
           <Link
-            className="btn btn-outline rounded font-bold text-lg"
+            className="btn btn-ghost rounded-lg font-bold text-lg"
             href="/login/"
           >
             Login
@@ -51,7 +51,7 @@ export default function Header() {
         {loginStatus && (
           <div className="dropdown dropdown-end cursor-pointer">
             <div className="avatar" tabIndex={0} role="button">
-              <div className="ring-primary ring-offset-base-100 w-12 rounded-full ring-2 ring-offset-2 hover:opacity-[0.8]">
+              <div className="ring-primary ring-offset-base-100 w-8 rounded-full ring-2 ring-offset-2 hover:opacity-[0.8]">
                 <img src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp" />
               </div>
             </div>

@@ -34,7 +34,7 @@ function CourseCard({
 
   return (
     <div className="card-body">
-      <h2 className="card-title mb-2">{course.title}</h2>
+      <h3 className="card-title mb-2">{course.title}</h3>
       <span>
         <b>Channel:</b>{" "}
         <Link href={course.channel_link} target="_blank">
@@ -88,6 +88,7 @@ export default function Cards({
 }) {
   const [savedCourses, setSavedCourses] = useState(new Set());
   useEffect(() => {
+    if (!Cookies.get("token")) return;
     const fetchCourses = async () => {
       const response = await api.get("/courses/saved_courses/");
       const savedCourseSet = new Set();

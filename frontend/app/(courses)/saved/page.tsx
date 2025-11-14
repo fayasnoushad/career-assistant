@@ -20,7 +20,7 @@ export default function SavedCourses() {
 
   return (
     <main className="flex flex-col items-center pb-10">
-      <h3 className="font-bold text-3xl my-10">Saved Courses</h3>
+      <h3 className="font-bold text-2xl my-10">Saved Courses</h3>
       {loading && <Loading />}
       {!loading && courses && courses.length > 0 && (
         <Cards content={courses} saved={true} />
