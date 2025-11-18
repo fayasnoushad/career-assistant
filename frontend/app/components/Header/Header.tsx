@@ -27,13 +27,12 @@ export default function Header() {
     };
     check();
   }, []);
-
   return (
-    <header className="min-h-[10vh] py-4 px-2 md:px-7 w-auto bg-base-300 flex flex-col md:flex md:flex-row justify-center items-center">
-      <Link href="/" className="text-2xl font-bold md:w-[50%] my-2">
+    <header className="navbar min-h-[10vh] bg-base-300 shadow-sm px-2 md:px-7 py-2">
+      <Link href="/" className="text-2xl font-bold md:w-[50%]">
         Career Assistant
       </Link>
-      <div className="flex flex-row justify-center items-center md:ml-auto gap-3 my-2">
+      <div className="flex flex-row justify-center items-center ml-auto gap-3">
         {!loginStatus && (
           <Link
             className="btn btn-ghost rounded-lg font-bold text-lg"

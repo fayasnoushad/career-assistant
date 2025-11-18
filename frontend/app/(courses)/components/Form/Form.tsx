@@ -12,10 +12,16 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 type Props = {
   setContent: Dispatch<SetStateAction<never[]>>;
   setCourses: Dispatch<SetStateAction<never[]>>;
-  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setLoading: Dispatch<SetStateAction<boolean>>;
+  setPicked: Dispatch<SetStateAction<number>>;
 };
 
-export default function Form({ setContent, setCourses, setLoading }: Props) {
+export default function Form({
+  setContent,
+  setCourses,
+  setLoading,
+  setPicked,
+}: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const courseName = searchParams.get("name") || "";
@@ -47,6 +53,7 @@ export default function Form({ setContent, setCourses, setLoading }: Props) {
   const handleSubmit = async (
     formData: { prompt: string } | { name: string }
   ) => {
+    setPicked(-1);
     setContent([]);
     setCourses([]);
     setLoading(true);

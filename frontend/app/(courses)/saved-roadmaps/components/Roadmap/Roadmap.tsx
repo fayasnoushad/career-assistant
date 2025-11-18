@@ -24,7 +24,7 @@ export default function Roadmap({
   const [progress, setProgress] = useState(0);
   const [collapsed, setCollapsed] = useState(true);
 
-  useEffect(() => {
+  const changeProgress = () =>
     setProgress(
       Math.round(
         (roadmap.filter((course) => learnedCourses.has(course)).length /
@@ -32,12 +32,13 @@ export default function Roadmap({
           100
       )
     );
-  }, []);
+
   const markAsLearned = async (name: string) => {
     await api.post("/courses/add_learned_course/", { name });
     setLearnedCourses(
       (prevLearnedCourses) => new Set(prevLearnedCourses.add(name))
     );
+    changeProgress();
   };
 
   const removeFromLearned = async (name: string) => {
@@ -46,6 +47,7 @@ export default function Roadmap({
       prevLearnedCourses.delete(name);
       return new Set(prevLearnedCourses);
     });
+    changeProgress();
   };
 
   return (
@@ -95,20 +97,27 @@ export default function Roadmap({
           </React.Fragment>
         ))}
       </div>
-      <div className="text-center py-2">
-        <button
-          className="btn btn-soft btn-primary btn-sm rounded-4xl"
-          onClick={() => setCollapsed((prevState) => !prevState)}
-        >
-          {collapsed ? "Show" : "Hide"} progress
-        </button>
-        {"  "}
-        <button
-          className="btn btn-soft btn-error btn-sm rounded-4xl"
-          onClick={() => removeRoadmap(id)}
-        >
-          Remove Roadmap
-        </button>
+      <div className="py-2">
+        <div className="flex flex-row gap-3 items-center justify-center">
+          <button
+            className="btn btn-soft btn-primary btn-sm rounded-4xl"
+            onClick={() =>
+              setCollapsed((prevCollapsed) => {
+                if (prevCollapsed) changeProgress();
+                return !prevCollapsed;
+              })
+            }
+          >
+            {collapsed ? "Show" : "Hide"} progress
+          </button>
+          <button
+            className="btn btn-soft btn-error btn-sm rounded-4xl"
+            onClick={() => removeRoadmap(id)}
+          >
+            Remove Roadmap
+          </button>
+        </div>
+
         {!collapsed && (
           <div className="mx-auto flex flex-row flex-wrap gap-10 justify-center items-center font-semibold pt-5">
             <div>

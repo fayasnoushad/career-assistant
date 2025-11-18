@@ -16,6 +16,7 @@ export default function Courses() {
         setContent={setRoadmaps}
         setCourses={setCourses}
         setLoading={setLoading}
+        setPicked={setPicked}
       />
       {picked === -1 ? (
         roadmaps.length > 0 && (

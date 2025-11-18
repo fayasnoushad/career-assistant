@@ -7,7 +7,11 @@ type Props = {
 export default function PromptForm({ submitForm }: Props) {
   const [prompt, setPrompt] = useState("");
 
-  const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleSubmit = (
+    event:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
     event.preventDefault();
     if (!prompt) {
       const modal = document.getElementById("write-something-modal");
@@ -27,6 +31,7 @@ export default function PromptForm({ submitForm }: Props) {
         placeholder="Write your interests"
         value={prompt}
         className="bg-base-100 border border-base-content my-5 w-[90%] md:w-[80%] rounded p-3"
+        onKeyDown={(e) => e.ctrlKey && e.key === "Enter" && handleSubmit(e)}
       ></textarea>
       <br />
       <button
