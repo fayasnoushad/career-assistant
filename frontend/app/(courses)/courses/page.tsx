@@ -41,6 +41,7 @@ export default function Courses() {
           roadmap={roadmaps[picked]}
           setContent={setCourses}
           setLoading={setLoading}
+          setPicked={setPicked}
           index={picked}
         />
       )}

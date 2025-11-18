@@ -14,6 +14,7 @@ class Database:
         self.pending_users = self.db["pending_users"]
         self.courses = self.db["courses"]
         self.saved_courses = self.db["saved_courses"]
+        self.saved_roadmaps = self.db["saved_roadmaps"]
         self.cache = {}
 
     async def add_user(self, user):
@@ -92,6 +93,19 @@ class Database:
                 del course["_id"]
                 courses.append(course)
         return courses
+
+    async def save_roadmap(self, user_id, roadmap: List[str]):
+        await self.saved_roadmaps.insert_one(
+            {"user_id": ObjectId(user_id), "roadmap": roadmap}
+        )
+
+    async def get_saved_roadmaps(self, user_id):
+        roadmaps = []
+        async for saved_roadmap in self.saved_roadmaps.find(
+            {"user_id": ObjectId(user_id)}
+        ):
+            roadmaps.append(saved_roadmap["roadmap"])
+        return roadmaps
 
 
 db = Database()

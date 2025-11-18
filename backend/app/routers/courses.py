@@ -30,6 +30,29 @@ async def get_course_details_by_category(details: schemas.Name):
     return courses
 
 
+@router.post("/save_roadmap/")
+async def save_roadmap(
+    details: schemas.Roadmap,
+    token: str = Depends(oauth2_scheme),
+):
+    roadmap = details.roadmap
+    payload = verify_token(token)
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise HTTPException(status_code=400, detail="User ID not found in token")
+    await db.save_roadmap(user_id, roadmap)
+
+
+@router.get("/saved_roadmaps", response_model=schemas.Roadmaps)
+async def get_saved_roadmaps(token: str = Depends(oauth2_scheme)):
+    payload = verify_token(token)
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise HTTPException(status_code=400, detail="User ID not found in token")
+    roadmaps = await db.get_saved_roadmaps(user_id)
+    return schemas.Roadmaps(roadmaps=roadmaps)
+
+
 @router.post("/save/")
 async def save_course(
     details: schemas.Id,
