@@ -63,7 +63,7 @@ export default function Header() {
                 Saved Courses
               </Link>
               <Link href="/saved-roadmaps" className="btn btn-ghost rounded-lg">
-                Saved Roadmpas
+                Saved Roadmaps
               </Link>
               <Link href="/settings" className="btn btn-ghost rounded-lg">
                 Settings
