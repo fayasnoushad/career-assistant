@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
 import Cookies from "js-cookie";
-import ThemeMode from "./ThemeMode";
-import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import ThemeDropdown from "./ThemeDropdown";
+import { useEffect, useState } from "react";
+import UserDetails from "./UserDetails";
 
 export default function Header() {
   const [loginStatus, setLoginStatus] = useState(false);
@@ -32,13 +33,7 @@ export default function Header() {
       <Link href="/" className="text-2xl font-bold md:w-[50%] my-2">
         Career Assistant
       </Link>
-      <div className="flex flex-row justify-center items-center md:ml-auto gap-5 font-bold my-2">
-        <Link
-          className="btn btn-ghost rounded-lg font-bold text-lg"
-          href="/courses/"
-        >
-          Courses
-        </Link>
+      <div className="flex flex-row justify-center items-center md:ml-auto gap-3 my-2">
         {!loginStatus && (
           <Link
             className="btn btn-ghost rounded-lg font-bold text-lg"
@@ -47,33 +42,8 @@ export default function Header() {
             Login
           </Link>
         )}
-        <ThemeMode />
-        {loginStatus && (
-          <div className="dropdown dropdown-end cursor-pointer">
-            <div className="avatar" tabIndex={0} role="button">
-              <div className="ring-primary ring-offset-base-100 w-8 rounded-full ring-2 ring-offset-2 hover:opacity-[0.8]">
-                <img src="https://img.daisyui.com/images/profile/demo/spiderperson@192.webp" />
-              </div>
-            </div>
-            <ul
-              tabIndex={-1}
-              className="menu dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 shadow-sm"
-            >
-              <Link href="/saved-courses" className="btn btn-ghost rounded-lg">
-                Saved Courses
-              </Link>
-              <Link href="/saved-roadmaps" className="btn btn-ghost rounded-lg">
-                Saved Roadmaps
-              </Link>
-              <Link href="/settings" className="btn btn-ghost rounded-lg">
-                Settings
-              </Link>
-              <Link href="/logout" className="btn btn-ghost rounded-lg">
-                Logout
-              </Link>
-            </ul>
-          </div>
-        )}
+        <ThemeDropdown />
+        {loginStatus && <UserDetails />}
       </div>
     </header>
   );

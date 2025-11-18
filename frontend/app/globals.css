@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
-  themes: light, dark, cupcake;
+  themes: all;
 }
 
 body {
