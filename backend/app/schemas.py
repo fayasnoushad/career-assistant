@@ -74,3 +74,11 @@ class Roadmap(BaseModel):
 
 class Roadmaps(BaseModel):
     roadmaps: List[List[str]]
+
+
+class SavedRoadmap(Roadmap):
+    id: str
+
+
+class SavedRoadmaps(BaseModel):
+    roadmaps: List[SavedRoadmap]

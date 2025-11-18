@@ -105,8 +105,16 @@ class Database:
         async for saved_roadmap in self.saved_roadmaps.find(
             {"user_id": ObjectId(user_id)}
         ):
-            roadmaps.append(saved_roadmap["roadmap"])
+            saved_roadmap["id"] = str(saved_roadmap["_id"])
+            del saved_roadmap["user_id"]
+            del saved_roadmap["_id"]
+            roadmaps.append(saved_roadmap)
         return roadmaps
+
+    async def remove_roadmap(self, user_id, roadmap_id):
+        await self.saved_roadmaps.delete_one(
+            {"_id": ObjectId(roadmap_id), "user_id": ObjectId(user_id)}
+        )
 
     async def get_learned_courses(self, user_id: str):
         doc = await self.learned_courses.find_one({"user_id": ObjectId(user_id)})

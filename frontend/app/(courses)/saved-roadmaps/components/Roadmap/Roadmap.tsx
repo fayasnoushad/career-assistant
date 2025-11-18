@@ -9,22 +9,28 @@ import React, {
 } from "react";
 
 export default function Roadmap({
+  id,
   roadmap,
   learnedCourses,
   setLearnedCourses,
+  removeRoadmap,
 }: {
+  id: string;
   roadmap: string[];
   learnedCourses: Set<string>;
   setLearnedCourses: Dispatch<SetStateAction<Set<string>>>;
+  removeRoadmap: Dispatch<string>;
 }) {
   const [progress, setProgress] = useState(0);
   const [collapsed, setCollapsed] = useState(true);
 
   useEffect(() => {
     setProgress(
-      (roadmap.filter((course) => learnedCourses.has(course)).length /
-        roadmap.length) *
-        100
+      Math.round(
+        (roadmap.filter((course) => learnedCourses.has(course)).length /
+          roadmap.length) *
+          100
+      )
     );
   }, []);
   const markAsLearned = async (name: string) => {
@@ -89,11 +95,22 @@ export default function Roadmap({
           </React.Fragment>
         ))}
       </div>
-      <div onClick={() => setCollapsed((prevState) => !prevState)}>
-        {collapsed ? (
-          <div className="font-semibold text-center">Show progress</div>
-        ) : (
-          <div className="mx-auto flex flex-row flex-wrap gap-10 justify-center items-center">
+      <div className="text-center py-2">
+        <button
+          className="btn btn-soft btn-primary btn-sm rounded-4xl"
+          onClick={() => setCollapsed((prevState) => !prevState)}
+        >
+          {collapsed ? "Show" : "Hide"} progress
+        </button>
+        {"  "}
+        <button
+          className="btn btn-soft btn-error btn-sm rounded-4xl"
+          onClick={() => removeRoadmap(id)}
+        >
+          Remove Roadmap
+        </button>
+        {!collapsed && (
+          <div className="mx-auto flex flex-row flex-wrap gap-10 justify-center items-center font-semibold pt-5">
             <div>
               Completed:{"  "}
               <div

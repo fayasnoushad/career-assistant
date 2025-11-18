@@ -43,14 +43,27 @@ async def save_roadmap(
     await db.save_roadmap(user_id, roadmap)
 
 
-@router.get("/saved_roadmaps/", response_model=schemas.Roadmaps)
+@router.get("/saved_roadmaps/", response_model=schemas.SavedRoadmaps)
 async def get_saved_roadmaps(token: str = Depends(oauth2_scheme)):
     payload = verify_token(token)
     user_id = payload.get("sub")
     if user_id is None:
         raise HTTPException(status_code=400, detail="User ID not found in token")
     roadmaps = await db.get_saved_roadmaps(user_id)
-    return schemas.Roadmaps(roadmaps=roadmaps)
+    return schemas.SavedRoadmaps(roadmaps=roadmaps)
+
+
+@router.post("/remove_roadmap/")
+async def remove_roadmap(
+    details: schemas.Id,
+    token: str = Depends(oauth2_scheme),
+):
+    roadmap_id = details.id
+    payload = verify_token(token)
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise HTTPException(status_code=400, detail="User ID not found in token")
+    await db.remove_roadmap(user_id, roadmap_id)
 
 
 @router.post("/save/")
