@@ -15,6 +15,7 @@ class Database:
         self.courses = self.db["courses"]
         self.saved_courses = self.db["saved_courses"]
         self.saved_roadmaps = self.db["saved_roadmaps"]
+        self.learned_courses = self.db["learned_courses"]
         self.cache = {}
 
     async def add_user(self, user):
@@ -106,6 +107,21 @@ class Database:
         ):
             roadmaps.append(saved_roadmap["roadmap"])
         return roadmaps
+
+    async def get_learned_courses(self, user_id: str):
+        doc = await self.learned_courses.find_one({"user_id": ObjectId(user_id)})
+        learned_courses = doc["courses"] if doc else []
+        return learned_courses
+
+    async def add_learned_course(self, user_id, course_name: str):
+        learned_courses = await self.get_learned_courses(user_id)
+        if course_name not in learned_courses:
+            learned_courses.append(course_name)
+        await self.learned_courses.update_one(
+            {"user_id": ObjectId(user_id)},
+            {"$set": {"courses": learned_courses}},
+            upsert=True,
+        )
 
 
 db = Database()

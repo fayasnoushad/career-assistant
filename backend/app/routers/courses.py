@@ -43,7 +43,7 @@ async def save_roadmap(
     await db.save_roadmap(user_id, roadmap)
 
 
-@router.get("/saved_roadmaps", response_model=schemas.Roadmaps)
+@router.get("/saved_roadmaps/", response_model=schemas.Roadmaps)
 async def get_saved_roadmaps(token: str = Depends(oauth2_scheme)):
     payload = verify_token(token)
     user_id = payload.get("sub")
@@ -86,3 +86,25 @@ async def get_saved_courses(token: str = Depends(oauth2_scheme)):
     if user_id is None:
         raise HTTPException(status_code=400, detail="User ID not found in token")
     return schemas.Courses(courses=await db.get_saved_courses(user_id))
+
+
+@router.get("/learned_courses/", response_model=schemas.CourseNames)
+async def get_learned_courses(token: str = Depends(oauth2_scheme)):
+    payload = verify_token(token)
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise HTTPException(status_code=400, detail="User ID not found in token")
+    learned_courses = await db.get_learned_courses(user_id)
+    return schemas.CourseNames(courses=learned_courses)
+
+
+@router.post("/add_learned_course/")
+async def add_learned_course(
+    details: schemas.Name, token: str = Depends(oauth2_scheme)
+):
+    course_name = details.name
+    payload = verify_token(token)
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise HTTPException(status_code=400, detail="User ID not found in token")
+    await db.add_learned_course(user_id, course_name)

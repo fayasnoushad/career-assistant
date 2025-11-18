@@ -7,6 +7,7 @@ import PromptForm from "./PromptForm/PromptForm";
 import SelectForm from "./SelectForm/SelectForm";
 import SelectDialog from "./SelectForm/SelectDialog";
 import Link from "next/link";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 type Props = {
   setContent: Dispatch<SetStateAction<never[]>>;
@@ -15,9 +16,21 @@ type Props = {
 };
 
 export default function Form({ setContent, setCourses, setLoading }: Props) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const courseName = searchParams.get("name") || "";
+  const pathname = usePathname();
+
   const [promptForm, setPromptForm] = useState(false);
   const [login, setLogin] = useState(false);
   const [haveApi, setHaveApi] = useState(false);
+
+  useEffect(() => {
+    if (courseName && courseName.length > 0) {
+      handleSubmit({ name: courseName });
+      router.replace(pathname);
+    }
+  }, []);
 
   useEffect(() => {
     const token = Cookies.get("token");

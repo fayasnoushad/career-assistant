@@ -64,6 +64,10 @@ class Courses(BaseModel):
     courses: List[Course]
 
 
+class CourseNames(BaseModel):
+    courses: List[str]
+
+
 class Roadmap(BaseModel):
     roadmap: List[str]
 
