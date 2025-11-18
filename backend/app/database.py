@@ -123,5 +123,15 @@ class Database:
             upsert=True,
         )
 
+    async def remove_learned_course(self, user_id, course_name: str):
+        learned_courses = await self.get_learned_courses(user_id)
+        if course_name in learned_courses:
+            learned_courses.remove(course_name)
+        await self.learned_courses.update_one(
+            {"user_id": ObjectId(user_id)},
+            {"$set": {"courses": learned_courses}},
+            upsert=True,
+        )
+
 
 db = Database()

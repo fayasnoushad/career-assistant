@@ -5,7 +5,7 @@ import Roadmap from "./components/Roadmap/Roadmap";
 import Loading from "@/app/components/Loading/Loading";
 
 export default function SavedRoadmaps() {
-  const [roadmaps, setRoadmaps] = useState([]);
+  const [roadmaps, setRoadmaps] = useState<string[][]>([]);
   const [learnedCourses, setLearnedCourses] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,7 +15,9 @@ export default function SavedRoadmaps() {
       const roadmapResponse = await api.get("/courses/saved_roadmaps/");
       setRoadmaps(roadmapResponse.data.roadmaps);
       const courseResponse = await api.get("/courses/learned_courses/");
-      setLearnedCourses(courseResponse.data.courses);
+      setLearnedCourses(
+        Array.from(new Set(courseResponse.data.courses as string[]))
+      );
     };
     fetchData();
     setTimeout(() => setLoading(false), 500);

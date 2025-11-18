@@ -108,3 +108,15 @@ async def add_learned_course(
     if user_id is None:
         raise HTTPException(status_code=400, detail="User ID not found in token")
     await db.add_learned_course(user_id, course_name)
+
+
+@router.post("/remove_learned_course/")
+async def remove_learned_course(
+    details: schemas.Name, token: str = Depends(oauth2_scheme)
+):
+    course_name = details.name
+    payload = verify_token(token)
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise HTTPException(status_code=400, detail="User ID not found in token")
+    await db.remove_learned_course(user_id, course_name)

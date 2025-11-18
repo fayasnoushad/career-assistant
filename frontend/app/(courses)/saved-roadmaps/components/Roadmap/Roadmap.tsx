@@ -16,14 +16,21 @@ export default function Roadmap({
     setLearnedCourses((prevLearnedCourses) => [...prevLearnedCourses, name]);
   };
 
+  const removeFromLearned = async (name: string) => {
+    await api.post("/courses/remove_learned_course/", { name });
+    setLearnedCourses((prevLearnedCourses) =>
+      prevLearnedCourses.filter((course) => course !== name)
+    );
+  };
+
   return (
-    <div className="flex flex-row flex-wrap justify-center items-center gap-2 mx-10 md:mx-20 lg:mx-30 my-5 bg-base-100 p-5 rounded-2xl border border-green-400">
+    <div className="flex flex-row flex-wrap justify-center items-center gap-2 mx-10 p-10 md:mx-20 lg:mx-30 my-5  rounded-2xl bg-base-200 w-[80%]">
       {roadmap.map((name, index) => (
         <React.Fragment key={index}>
-          <div className="dropdown dropdown-end cursor-pointer">
+          <div className="dropdown dropdown-center cursor-pointer">
             <button
               className={`rounded-lg btn btn-outline ${
-                learnedCourses.includes(name) ? "btn-secondary" : ""
+                learnedCourses.includes(name) && "btn-info"
               }`}
               tabIndex={0}
               role="button"
@@ -41,7 +48,14 @@ export default function Roadmap({
               >
                 Get Courses
               </Link>
-              {!learnedCourses.includes(name) && (
+              {learnedCourses.includes(name) ? (
+                <div
+                  className="btn btn-ghost rounded-lg"
+                  onClick={() => removeFromLearned(name)}
+                >
+                  Remove from learned
+                </div>
+              ) : (
                 <div
                   className="btn btn-ghost rounded-lg"
                   onClick={() => markAsLearned(name)}
