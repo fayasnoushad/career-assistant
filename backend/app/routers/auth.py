@@ -75,6 +75,17 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
+def get_user_id(token: str = Depends(oauth2_scheme)):
+    try:
+        payload = verify_token(token)
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise HTTPException(status_code=400, detail="User ID not found in token")
+    return user_id
+
+
 def require_admin(user=Depends(get_current_user)):
     if user["admin"]:
         return user
@@ -188,11 +199,7 @@ def login_status_check(token: str = Depends(oauth2_scheme)):
 
 
 @router.post("/details/", response_model=schemas.User)
-async def get_user_details(token: str = Depends(oauth2_scheme)):
-    payload = verify_token(token)
-    user_id = payload.get("sub")
-    if user_id is None:
-        raise HTTPException(status_code=400, detail="Email not found in token")
+async def get_user_details(user_id: str = Depends(get_user_id)):
     user_data = await db.get_user(user_id=user_id)
     if not user_data:
         raise HTTPException(status_code=404, detail="User not found")
@@ -201,10 +208,6 @@ async def get_user_details(token: str = Depends(oauth2_scheme)):
 
 @router.patch("/update/")
 async def update_user_details(
-    user_data: schemas.UserUpdate, token: str = Depends(oauth2_scheme)
+    user_data: schemas.UserUpdate, user_id: str = Depends(get_user_id)
 ):
-    payload = verify_token(token)
-    user_id = payload.get("sub")
-    if user_id is None:
-        raise HTTPException(status_code=400, detail="Email not found in token")
     return await db.update_user(user_id, data=user_data)
