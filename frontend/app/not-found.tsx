@@ -1,7 +1,14 @@
+"use client";
 export default function NotFoundPage() {
   return (
     <main className="flex flex-col justify-center items-center text-3xl">
-      404 | Page not found
+      <span className="block mb-5">404 - Page not found</span>
+      <button
+        className="btn btn-info rounded-full"
+        onClick={() => (window.location.href = "/")}
+      >
+        Go to Homepage
+      </button>
     </main>
   );
 }

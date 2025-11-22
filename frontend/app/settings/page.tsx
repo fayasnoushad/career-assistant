@@ -30,7 +30,7 @@ export default function Settings() {
   };
 
   return (
-    <>
+    <main className="min-h-[80vh]">
       <form className="rounded-3xl max-w-md p-7 mx-auto flex flex-col items-center justify-center">
         <h2 className="text-center my-5 text-2xl font-semibold">Settings</h2>
         <div className="relative z-0 w-full mb-5 group">
@@ -101,6 +101,6 @@ export default function Settings() {
           </button>
         </div>
       </form>
-    </>
+    </main>
   );
 }

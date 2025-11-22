@@ -28,14 +28,14 @@ export default function Header() {
     check();
   }, []);
   return (
-    <header className="navbar min-h-[10vh] bg-base-300 shadow-sm px-2 md:px-7 py-2">
-      <Link href="/" className="text-2xl font-bold md:w-[50%]">
+    <header className="navbar min-h-[10vh] bg-base-300 shadow-sm px-3 md:px-7 py-2">
+      <Link href="/" className="text-2xl font-bold">
         Career Assistant
       </Link>
-      <div className="flex flex-row justify-center items-center ml-auto gap-3">
+      <div className="flex flex-row justify-center items-center ml-auto gap-1 md:gap-3">
         {!loginStatus && (
           <Link
-            className="btn btn-ghost rounded-lg font-bold text-lg"
+            className="btn btn-ghost btn-sm md:btn-md rounded-lg font-bold text-lg"
             href="/login/"
           >
             Login

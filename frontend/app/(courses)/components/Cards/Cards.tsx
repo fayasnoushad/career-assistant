@@ -49,7 +49,10 @@ function CourseCard({
       </span>
       <div className="flex justify-center md:justify-end card-actions pt-4">
         {isLogin && (
-          <button className="btn btn-soft rounded-lg" onClick={toggleSaved}>
+          <button
+            className="btn btn-soft btn-sm md:btn-md rounded-lg"
+            onClick={toggleSaved}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill={saved ? "currentColor" : "none"}
@@ -70,7 +73,7 @@ function CourseCard({
         <Link
           href={course.link}
           target="_blank"
-          className="btn btn-soft rounded-lg"
+          className="btn btn-soft btn-sm md:btn-md rounded-lg"
         >
           Open in Course Website
         </Link>
