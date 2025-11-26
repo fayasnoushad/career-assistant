@@ -36,27 +36,26 @@ def get_course_details(card: WebElement):
     return course_data
 
 
-def parse(driver: webdriver.Firefox, names: List[str]) -> List[dict]:
+def parse(driver: webdriver.Firefox, name: str) -> List[dict]:
     courses = []
     course_links = set()
-    for name in names:
-        url = URL.format(name)
-        driver.get(url)
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "text-ellipsis"))
+    url = URL.format(name)
+    driver.get(url)
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.CLASS_NAME, "text-ellipsis"))
+    )
+    cards_el = driver.find_element(By.CLASS_NAME, "grid-cols-1")
+    cards = cards_el.find_elements(By.CSS_SELECTOR, ":scope > div")
+    for card in cards:
+        WebDriverWait(card, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, "a"))
         )
-        cards_el = driver.find_element(By.CLASS_NAME, "grid-cols-1")
-        cards = cards_el.find_elements(By.CSS_SELECTOR, ":scope > div")
-        for card in cards:
-            WebDriverWait(card, 10).until(
-                EC.presence_of_element_located((By.TAG_NAME, "a"))
-            )
-            # condition to avoid duplicates
-            if (
-                card.find_element(By.TAG_NAME, "a").get_attribute("href")
-                not in course_links
-            ):
-                course_details = get_course_details(card)
-                courses.append(course_details)
-                course_links.add(course_details.get("link"))
+        # condition to avoid duplicates
+        if (
+            card.find_element(By.TAG_NAME, "a").get_attribute("href")
+            not in course_links
+        ):
+            course_details = get_course_details(card)
+            courses.append(course_details)
+            course_links.add(course_details.get("link"))
     return courses

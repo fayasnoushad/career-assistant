@@ -8,22 +8,25 @@ from .prompt_details import get_prompt_details
 from .scrape_helper.webdriver import get_web_driver
 
 
-async def get_courses(names: List[str]) -> schemas.Courses:
+async def get_courses(name: str) -> schemas.Courses:
     courses = []
     course_links = set()
-    for name in names:  # here name => skill name
-        for course in await db.get_courses(name):
-            if course.get("link") not in course_links:
-                course_links.add(course.get("link"))
-                courses.append(course)
+    for course in await db.get_courses(name):
+        if course.get("link") not in course_links:
+            course_links.add(course.get("link"))
+            courses.append(course)
     if len(courses) < MIN_COURSE_LIMIT:
         driver = await get_web_driver()
-        edx_courses = edx_scrape.parse(driver, names)
+        edx_courses = edx_scrape.parse(driver, name)
+        ids = await db.add_courses(edx_courses)
+        for i in range(len(ids)):
+            edx_courses[i]["id"] = str(ids[i])
         courses.extend(edx_courses)
-        await db.add_courses(edx_courses)
-        youtube_courses = youtube_scrape.parse(driver, names)
+        youtube_courses = youtube_scrape.parse(driver, name)
+        ids = await db.add_courses(youtube_courses)
+        for i in range(len(ids)):
+            youtube_courses[i]["id"] = str(ids[i])
         courses.extend(youtube_courses)
-        await db.add_courses(youtube_courses)
         driver.quit()
     return schemas.Courses(courses=courses)
 

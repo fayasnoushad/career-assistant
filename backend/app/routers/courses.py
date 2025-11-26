@@ -21,7 +21,7 @@ async def get_course_details_by_prompt(
 
 @router.post("/category/", response_model=schemas.Courses)
 async def get_course_details_by_category(details: schemas.Name):
-    courses = await get_courses([details.name])
+    courses = await get_courses(details.name)
     return courses
 
 

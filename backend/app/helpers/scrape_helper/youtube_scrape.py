@@ -30,17 +30,14 @@ def get_course_details(playlist: WebElement) -> dict[str, str | None]:
     return course_data
 
 
-def parse(driver: webdriver.Firefox, names: List[str]) -> List[dict]:
+def parse(driver: webdriver.Firefox, name: str) -> List[dict]:
     courses = []
-    for name in names:
-        url = URL.format(name)
-        driver.get(url)
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.TAG_NAME, "yt-lockup-metadata-view-model")
-            )
-        )
-        playlists = driver.find_elements(By.TAG_NAME, "yt-lockup-metadata-view-model")
-        for playlist in playlists:
-            courses.append(get_course_details(playlist))
+    url = URL.format(name)
+    driver.get(url)
+    WebDriverWait(driver, 10).until(
+        EC.presence_of_element_located((By.TAG_NAME, "yt-lockup-metadata-view-model"))
+    )
+    playlists = driver.find_elements(By.TAG_NAME, "yt-lockup-metadata-view-model")
+    for playlist in playlists:
+        courses.append(get_course_details(playlist))
     return courses

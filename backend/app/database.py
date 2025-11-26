@@ -62,7 +62,8 @@ class Database:
         return user.get("gemini_api") if user else None
 
     async def add_courses(self, courses: List[dict]):
-        await self.courses.insert_many(courses)
+        result = await self.courses.insert_many(courses)
+        return result.inserted_ids
 
     async def get_courses(self, name):
         courses = []
