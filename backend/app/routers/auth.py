@@ -123,7 +123,7 @@ async def send_verification_email(to_email: str, token: str):
 @router.post("/register/")
 async def register_user(user: schemas.UserCreate):
     admin = user.email in SUPER_ADMINS
-    existing_user = await db.get_user(user.email)
+    existing_user = await db.get_user(email=user.email)
     if existing_user and existing_user.get("verified"):
         raise HTTPException(status_code=409, detail="User already exists")
     await db.add_pending_user(
@@ -143,7 +143,9 @@ def get_token(user) -> schemas.Token:
     role = "admin" if user["admin"] else "user"
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": user["id"]}, role=role, expires_delta=access_token_expires
+        data={"sub": user["id"] if user.get("id") else user["email"]},
+        role=role,
+        expires_delta=access_token_expires,
     )
     return schemas.Token(
         access_token=access_token, token_type="bearer", admin=(role == "admin")

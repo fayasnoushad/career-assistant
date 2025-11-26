@@ -19,7 +19,8 @@ class Database:
         self.cache = {}
 
     async def add_user(self, user):
-        await self.users.insert_one(user)
+        result = await self.users.insert_one(user)
+        return str(result.inserted_id)
 
     async def add_pending_user(self, user):
         await self.pending_users.delete_many({"email": user["email"]})
@@ -38,9 +39,11 @@ class Database:
 
     async def verify_user(self, email: str):
         user = await self.pending_users.find_one({"email": email})
-        await self.add_user(user)
+        if user:
+            del user["_id"]
+        user_id = await self.add_user(user)
         await self.pending_users.delete_many({"email": email})
-        return user
+        return await self.get_user(user_id)
 
     async def update_user(self, user_id: str, data: schemas.UserUpdate):
         await self.users.update_one(
