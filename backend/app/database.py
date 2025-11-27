@@ -14,6 +14,7 @@ class Database:
         self.pending_users = self.db["pending_users"]
         self.jobs = self.db["jobs"]
         self.courses = self.db["courses"]
+        self.saved_jobs = self.db["saved_jobs"]
         self.saved_courses = self.db["saved_courses"]
         self.saved_roadmaps = self.db["saved_roadmaps"]
         self.learned_courses = self.db["learned_courses"]
@@ -92,6 +93,28 @@ class Database:
             job["id"] = str(job["_id"])
             del job["_id"]
             jobs.append(job)
+        return jobs
+
+    async def save_job(self, job_id, user_id):
+        await self.unsave_job(job_id, user_id)
+        await self.saved_jobs.insert_one(
+            {"job_id": ObjectId(job_id), "user_id": ObjectId(user_id)}
+        )
+
+    async def unsave_job(self, job_id, user_id):
+        await self.saved_jobs.delete_one(
+            {"job_id": ObjectId(job_id), "user_id": ObjectId(user_id)}
+        )
+
+    async def get_saved_jobs(self, user_id):
+        jobs = []
+        async for saved_job in self.saved_jobs.find({"user_id": ObjectId(user_id)}):
+            job_id = saved_job["job_id"]
+            job = await self.jobs.find_one({"_id": job_id})
+            if job:
+                job["id"] = str(job_id)
+                del job["_id"]
+                jobs.append(job)
         return jobs
 
     async def add_courses(self, courses: List[dict]):
