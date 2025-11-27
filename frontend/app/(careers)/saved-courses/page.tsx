@@ -23,7 +23,7 @@ export default function SavedCourses() {
       <h3 className="font-bold text-2xl my-10">Saved Courses</h3>
       {loading && <Loading />}
       {!loading && courses && courses.length > 0 && (
-        <Cards content={courses} saved={true} />
+        <Cards type="course" content={courses} saved={true} />
       )}
       {!loading && courses.length === 0 && "No courses saved!"}
     </main>

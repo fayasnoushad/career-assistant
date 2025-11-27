@@ -50,6 +50,28 @@ class Id(BaseModel):
     id: str
 
 
+class JobScrape(BaseModel):
+    name: str
+    company: Optional[str] = None
+    location: Optional[str] = None
+    salary: Optional[int] = None
+    link: str
+    description: str
+    time: str
+
+
+class Job(JobScrape):
+    id: str
+
+
+class Jobs(BaseModel):
+    jobs: List[Job]
+
+
+class JobNames(BaseModel):
+    jobs: List[str]
+
+
 class Course(BaseModel):
     id: str
     title: str

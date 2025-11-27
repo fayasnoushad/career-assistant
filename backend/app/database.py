@@ -12,6 +12,7 @@ class Database:
         self.db = self.client[database_name]
         self.users = self.db["users"]
         self.pending_users = self.db["pending_users"]
+        self.jobs = self.db["jobs"]
         self.courses = self.db["courses"]
         self.saved_courses = self.db["saved_courses"]
         self.saved_roadmaps = self.db["saved_roadmaps"]
@@ -60,6 +61,38 @@ class Database:
     async def get_api(self, user_id: str) -> Optional[str]:
         user = await self.users.find_one({"_id": ObjectId(user_id)})
         return user.get("gemini_api") if user else None
+
+    async def add_job(self, job: dict) -> str:
+        # check the same job stored in database or not
+        same_job = await self.jobs.find_one({"link": job.get("name")})
+        if same_job:
+            same_job["id"] = str(same_job["_id"])
+            same_job.pop("_id", None)
+            return same_job
+        result = await self.jobs.insert_one(job)
+        return str(result.inserted_id)
+
+    async def add_jobs(self, jobs: List[dict]) -> List[schemas.Job]:
+        job_list = []
+        for job in jobs:
+            try:
+                inserted_job_id = await self.add_job(job)
+                job.pop("_id", None)
+                job["id"] = inserted_job_id
+                job_list.append(schemas.Job(**job))
+            except:
+                pass
+        return job_list
+
+    async def get_jobs(self, job_name: str) -> List[dict]:
+        jobs = []
+        async for job in self.jobs.find(
+            {"name": {"$regex": re.escape(job_name), "$options": "i"}}
+        ):
+            job["id"] = str(job["_id"])
+            del job["_id"]
+            jobs.append(job)
+        return jobs
 
     async def add_courses(self, courses: List[dict]):
         result = await self.courses.insert_many(courses)

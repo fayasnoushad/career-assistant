@@ -3,7 +3,7 @@ from google import genai
 from ..schemas import Roadmaps
 
 
-async def get_prompt_details(prompt: str, api_key: str) -> Roadmaps:
+async def get_roadmaps(prompt: str, api_key: str) -> Roadmaps:
     query = (
         "Given the following prompt, generate several distinct roadmaps. "
         "Each name must be the name of a course, and each roadmap should cover unique topics. "

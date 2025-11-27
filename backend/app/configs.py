@@ -14,6 +14,9 @@ DB_NAME = os.environ.get("DB_NAME", "career-assistant")
 # course scraping limits
 MIN_COURSE_LIMIT = int(os.environ.get("MIN_COURSE_LIMIT", 10))
 
+# job scraping limits
+MIN_JOB_LIMIT = int(os.environ.get("MIN_JOB_LIMIT", 10))
+
 # authentication (jwt)
 SECRET_KEY = os.environ.get("SECRET_KEY", secrets.token_hex(32))
 ALGORITHM = os.environ.get("ALGORITHM", "HS256")

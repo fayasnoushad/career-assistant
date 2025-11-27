@@ -2,29 +2,31 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import api from "@/app/helpers/api";
-import PromptDialog from "./PromptForm/PromptDialog";
+import FormDialog from "./FormDialog";
 import PromptForm from "./PromptForm/PromptForm";
 import SelectForm from "./SelectForm/SelectForm";
-import SelectDialog from "./SelectForm/SelectDialog";
 import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 type Props = {
-  setContent: Dispatch<SetStateAction<never[]>>;
+  setJobNames: Dispatch<SetStateAction<never[]>>;
+  setRoadmaps: Dispatch<SetStateAction<never[]>>;
+  setJobs: Dispatch<SetStateAction<never[]>>;
   setCourses: Dispatch<SetStateAction<never[]>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   setPicked: Dispatch<SetStateAction<number>>;
 };
 
 export default function Form({
-  setContent,
+  setJobNames,
+  setRoadmaps,
+  setJobs,
   setCourses,
   setLoading,
   setPicked,
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const courseName = searchParams.get("name") || "";
   const pathname = usePathname();
 
   const [promptForm, setPromptForm] = useState(false);
@@ -32,8 +34,9 @@ export default function Form({
   const [haveApi, setHaveApi] = useState(false);
 
   useEffect(() => {
-    if (courseName && courseName.length > 0) {
-      handleSubmit({ name: courseName });
+    const name = searchParams.get("name");
+    if (name && name.length > 0) {
+      handleSubmit(name, searchParams.get("type") === "job" ? "job" : "course");
       router.replace(pathname);
     }
   }, []);
@@ -51,18 +54,35 @@ export default function Form({
   }, []);
 
   const handleSubmit = async (
-    formData: { prompt: string } | { name: string }
+    input: string,
+    formType: "job" | "course",
+    event?: React.MouseEvent<HTMLButtonElement>
   ) => {
+    if (event) event.preventDefault();
+    if (!input) {
+      const modal = document.getElementById("form-dialog-modal");
+      if (modal) (modal as HTMLDialogElement).showModal();
+      return;
+    }
     setPicked(-1);
-    setContent([]);
+    setJobNames([]);
+    setRoadmaps([]);
+    setJobs([]);
     setCourses([]);
     setLoading(true);
-    const endpoint = "/courses/" + (promptForm ? "prompt/" : "category/");
+    const endpoint =
+      (formType === "job" ? "/jobs/" : "/courses/") +
+      (promptForm ? "prompt/" : "category/");
+    const formData = promptForm ? { prompt: input } : { name: input };
     const response = await api.post(endpoint, { ...formData });
 
-    if (promptForm) setContent(response.data.roadmaps);
-    else setCourses(response.data.courses);
-
+    if (promptForm) {
+      if (formType === "job") setJobNames(response.data.jobs);
+      else setRoadmaps(response.data.roadmaps);
+    } else {
+      if (formType === "job") setJobs(response.data.jobs);
+      else setCourses(response.data.courses);
+    }
     setLoading(false);
   };
 
@@ -70,7 +90,7 @@ export default function Form({
     <>
       <form className="w-[90%] md:w-[80%] p-5 md:p-10 flex flex-col items-center text-center my-10 bg-base-200 rounded-2xl shadow-base-100">
         <h3 className="text-xl md:text-2xl">
-          Which courses are you looking for?
+          Find jobs or courses for your career!
         </h3>
         {promptForm ? (
           !login ? (
@@ -99,7 +119,9 @@ export default function Form({
           className="mt-4 mb-2 text-blue-500 cursor-pointer"
           onClick={() => {
             setPromptForm((prevPromptForm) => !prevPromptForm);
-            setContent([]);
+            setJobNames([]);
+            setRoadmaps([]);
+            setJobs([]);
             setCourses([]);
             setLoading(false);
           }}
@@ -107,7 +129,7 @@ export default function Form({
           Switch to {promptForm ? "Normal" : "Prompt"} form
         </span>
       </form>
-      {promptForm ? <PromptDialog /> : <SelectDialog />}
+      <FormDialog />
     </>
   );
 }

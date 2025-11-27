@@ -1,9 +1,20 @@
 import Link from "next/link";
 import Cookies from "js-cookie";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "@/app/helpers/api";
 
-export type CourseType = {
+type JobType = {
+  id: string;
+  name: string;
+  company?: string;
+  location?: string;
+  salary?: number;
+  link: string;
+  description: string;
+  time: string;
+};
+
+type CourseType = {
   id: string;
   title: string;
   channel: string;
@@ -12,6 +23,69 @@ export type CourseType = {
   level: string | null;
   link: string;
 };
+
+function JobCard({ job }: { job: JobType }) {
+  return (
+    <div className="card-body">
+      <h2 className="card-title mb-2">{job.name}</h2>
+      <span>
+        <b>Company:</b> {job.company}
+      </span>
+      <span>
+        <b>Location:</b> {job.location ? job.location : "Not found"}
+      </span>
+      <span>
+        <b>Salary:</b>{" "}
+        {job.salary && job.salary !== 0
+          ? job.salary + " per month"
+          : "Not disclosed"}
+      </span>
+      <span>
+        <b>Description: </b>
+        <span
+          className="cursor-pointer text-blue-600"
+          onClick={() => {
+            const modal = document.getElementById(
+              `description-modal-${job.id}`
+            );
+            if (modal) {
+              (modal as HTMLDialogElement).showModal();
+            }
+          }}
+        >
+          show description
+        </span>
+      </span>
+      <dialog id={`description-modal-${job.id}`} className="modal">
+        <div className="modal-box md:min-w-3/5 h-[60%]">
+          <h3 className="font-bold text-lg m-2 md:mx-4 lg:mx-6">{job.name}</h3>
+          <p className="m-2 mt-4 md:m-4 lg:mx-6">
+            {job.description.split("\n").map((line, index) => (
+              <React.Fragment key={index}>
+                {line}
+                <br />
+              </React.Fragment>
+            ))}
+          </p>
+          <div className="modal-action flex justify-center md:justify-end">
+            <form method="dialog">
+              <button className="btn btn-soft rounded-lg">Close</button>
+            </form>
+          </div>
+        </div>
+      </dialog>
+      <div className="flex justify-center card-actions pt-4">
+        <Link
+          href={job.link}
+          target="_blank"
+          className="btn btn-soft rounded-lg btn-sm md:btn-md"
+        >
+          Open in Job Website
+        </Link>
+      </div>
+    </div>
+  );
+}
 
 function CourseCard({
   course,
@@ -85,9 +159,11 @@ function CourseCard({
 export default function Cards({
   content,
   saved = false,
+  type,
 }: {
-  content: CourseType[];
+  content: JobType[] | CourseType[];
   saved?: boolean;
+  type: "job" | "course";
 }) {
   const [savedCourses, setSavedCourses] = useState(new Set());
   useEffect(() => {
@@ -105,12 +181,16 @@ export default function Cards({
 
   return (
     <div className="m-5 md:mx-20 lg:mx-30 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center items-center">
-      {content.map((course, index) => (
+      {content.map((career, index) => (
         <div className="card card-md bg-base-200 shadow-sm w-full" key={index}>
-          <CourseCard
-            course={course}
-            saveStatus={saved || savedCourses.has(course.id)}
-          />
+          {type === "job" ? (
+            <JobCard job={career as JobType} />
+          ) : (
+            <CourseCard
+              course={career as CourseType}
+              saveStatus={saved || savedCourses.has(career.id)}
+            />
+          )}
         </div>
       ))}
     </div>
