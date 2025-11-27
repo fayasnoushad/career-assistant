@@ -203,7 +203,7 @@ export default function Cards({
   useEffect(() => {
     if (!Cookies.get("token")) return;
     const fetchSaved = async () => {
-      const response = await api.get(`/courses/saved_${type}s/`);
+      const response = await api.get(`/${type}s/saved_${type}s/`);
       const savedSet = new Set();
       type === "job"
         ? response.data.jobs.map((savedJob: JobType) =>

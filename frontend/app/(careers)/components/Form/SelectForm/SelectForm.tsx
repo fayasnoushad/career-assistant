@@ -24,6 +24,7 @@ export default function SelectForm({ submitForm }: Props) {
           placeholder={"Enter a name..."}
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
         />
       </div>
       <div className="flex flex-row gap-2">
