@@ -11,8 +11,8 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 type Props = {
   setJobNames: Dispatch<SetStateAction<never[]>>;
   setRoadmaps: Dispatch<SetStateAction<never[]>>;
-  setJobs: Dispatch<SetStateAction<never[]>>;
-  setCourses: Dispatch<SetStateAction<never[]>>;
+  setJobs: any;
+  setCourses: any;
   setLoading: Dispatch<SetStateAction<boolean>>;
   setPicked: Dispatch<SetStateAction<number>>;
 };

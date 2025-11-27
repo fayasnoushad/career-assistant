@@ -1,12 +1,12 @@
 import api from "@/app/helpers/api";
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 interface Props {
   roadmap: string[];
   setContent: any;
-  setLoading: any;
+  setLoading: Dispatch<SetStateAction<boolean>>;
   disabled?: boolean;
-  setPicked?: any;
+  setPicked?: Dispatch<SetStateAction<number>>;
   index?: number;
 }
 

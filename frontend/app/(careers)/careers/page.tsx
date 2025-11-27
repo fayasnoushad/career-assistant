@@ -52,7 +52,13 @@ export default function Careers() {
           index={picked}
         />
       )}
-      {jobNames && <JobList names={jobNames} />}
+      {jobNames && (
+        <JobList
+          names={jobNames}
+          setJobs={setJobs as any}
+          setLoading={setLoading}
+        />
+      )}
       {loading && <Loading />}
       {jobs && <Cards content={jobs} type={"job"} />}
       {courses && <Cards content={courses} type={"course"} />}
