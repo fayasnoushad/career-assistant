@@ -1,6 +1,6 @@
 ## Career Assistant
 
-Career Assistant is a web application designed to find courses and roadmaps for career development.
+Career Assistant is a web application designed to find courses, roadmaps, and jobs for career development.
 
 ---
 
@@ -8,6 +8,8 @@ Career Assistant is a web application designed to find courses and roadmaps for 
 
 - Search for courses based on your interests and career goals
 - Find roadmaps tailored to your career goals
+- Search for jobs based on your skills and preferences
+- AI-powered recommendations using Gemini models
 
 ---
 
