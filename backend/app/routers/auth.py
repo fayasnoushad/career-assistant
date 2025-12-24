@@ -123,14 +123,14 @@ async def send_verification_email(to_email: str, token: str):
 @router.post("/register/")
 async def register_user(user: schemas.UserCreate):
     admin = user.email in SUPER_ADMINS
-    existing_user = await db.get_user(email=user.email)
-    if existing_user and existing_user.get("verified"):
+    existing_user = await db.get_user(email=user.email.lower())
+    if existing_user:
         raise HTTPException(status_code=409, detail="User already exists")
     await db.add_pending_user(
         dict(
             first_name=user.first_name,
             last_name=user.last_name,
-            email=user.email,
+            email=user.email.lower(),
             password=sha256_crypt.hash(user.password),
             admin=admin,
         )
