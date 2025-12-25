@@ -28,13 +28,21 @@ function JobCard({ job, saveStatus }: { job: JobType; saveStatus: boolean }) {
   const isLogin = Boolean(Cookies.get("token"));
   const [saved, isSaved] = useState(false);
 
+  const [salary, setSalary] = useState<string | number | null>(null);
   useEffect(() => {
     isSaved(saveStatus);
+    setSalary(job.salary || null);
   }, []);
 
   const toggleSaved = async () => {
     isSaved((prevSaved) => !prevSaved);
     await api.post(`/jobs/${saved ? "unsave" : "save"}/`, { id: job.id });
+  };
+
+  const predictSalary = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    const response = await api.post("/jobs/predict_salary/", { id: job.id });
+    setSalary(response.data.salary);
   };
 
   return (
@@ -48,9 +56,19 @@ function JobCard({ job, saveStatus }: { job: JobType; saveStatus: boolean }) {
       </span>
       <span>
         <b>Salary:</b>{" "}
-        {job.salary && job.salary !== 0
-          ? job.salary + " per month"
-          : "Not disclosed"}
+        {salary ? (
+          salary + " per month"
+        ) : (
+          <>
+            Not disclosed,{" "}
+            <span
+              onClick={(e) => predictSalary(e)}
+              className="cursor-pointer text-blue-600"
+            >
+              predict salary
+            </span>
+          </>
+        )}
       </span>
       <span>
         <b>Description: </b>

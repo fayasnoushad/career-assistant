@@ -72,6 +72,10 @@ class JobNames(BaseModel):
     jobs: List[str]
 
 
+class Salary(BaseModel):
+    salary: str
+
+
 class Course(BaseModel):
     id: str
     title: str

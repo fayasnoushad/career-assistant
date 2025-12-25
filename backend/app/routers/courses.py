@@ -1,6 +1,6 @@
 from .. import schemas
 from ..database import db
-from .auth import oauth2_scheme, verify_token, get_user_id
+from .auth import get_user_id
 from fastapi import APIRouter, Depends, HTTPException
 from ..helpers.courses_find import get_courses, get_courses_by_prompt
 

@@ -85,6 +85,13 @@ class Database:
                 pass
         return job_list
 
+    async def get_job(self, job_id: str):
+        job = await self.jobs.find_one({"_id": ObjectId(job_id)})
+        if job:
+            job["id"] = job_id
+            del job["_id"]
+        return job
+
     async def get_jobs(self, job_name: str) -> List[dict]:
         jobs = []
         async for job in self.jobs.find(
