@@ -1,6 +1,6 @@
 ## Career Assistant
 
-Career Assistant is a web application designed to find courses, roadmaps, and jobs for career development.
+Career Assistant is a web application designed to find courses, roadmaps, and jobs for career development. It leverages AI models like Gemini to provide personalized recommendations based on user inputs. The application also includes web scraping capabilities to fetch the latest job listings from various sources.
 
 ---
 
@@ -9,14 +9,18 @@ Career Assistant is a web application designed to find courses, roadmaps, and jo
 - Search for courses based on your interests and career goals
 - Find roadmaps tailored to your career goals
 - Search for jobs based on your skills and preferences
-- AI-powered recommendations using Gemini models
+- AI-powered jobs and roadmap recommendations according to user prompts
+- Web scraping for up-to-date job listings
+- Save and manage your favorite courses, roadmaps, and jobs
+- Salary predictions for jobs where salary not disclosed
+- User-friendly interface with Next.js and Tailwind CSS
 
 ---
 
 ### Tech Stack
 
-- **Frontend**: Next.js, TypeScript, Tailwind CSS
-- **Backend**: FastAPI (Python)
+- **Frontend**: Next.js, TypeScript, Tailwind CSS, DaisyUI
+- **Backend**: FastAPI (Python), Selenium (for web scraping)
 - **Database**: MongoDB
 - **AI Models**: Gemini
 
