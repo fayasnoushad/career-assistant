@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
 import "./globals.css";
+import type { Metadata } from "next";
+import Providers from "@/store/provider";
+import { ThemeProvider } from "next-themes";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
-import { ThemeProvider } from "next-themes";
 
 export const metadata: Metadata = {
   title: "Careeer Assistant",
@@ -23,7 +24,7 @@ export default function RootLayout({
           enableSystem={true}
         >
           <Header />
-          {children}
+          <Providers>{children}</Providers>
           <Footer />
         </ThemeProvider>
       </body>

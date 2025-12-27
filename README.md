@@ -19,7 +19,7 @@ Career Assistant is a web application designed to find courses, roadmaps, and jo
 
 ### Tech Stack
 
-- **Frontend**: Next.js, TypeScript, Tailwind CSS, DaisyUI
+- **Frontend**: Next.js, TypeScript, Tailwind CSS, DaisyUI, Redux (for state management)
 - **Backend**: FastAPI (Python), Selenium (for web scraping)
 - **Database**: MongoDB
 - **AI Models**: Gemini

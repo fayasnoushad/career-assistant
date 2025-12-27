@@ -1,11 +1,14 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import api from "../helpers/api";
+import { useDispatch } from "react-redux";
+import { setHasApiKey } from "@/store/slices/apiKeySlice";
+import React, { useEffect, useState } from "react";
 
 export default function Settings() {
   const [fName, setFName] = useState("");
   const [lName, setLName] = useState("");
   const [apiKey, setApiKey] = useState("");
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,6 +29,7 @@ export default function Settings() {
       gemini_api: apiKey,
     };
     await api.patch("/auth/update/", data);
+    dispatch(setHasApiKey(apiKey.length > 0));
     alert("Updated Successfully");
   };
 

@@ -1,12 +1,14 @@
 "use client";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+
+import Link from "next/link";
 import Cookies from "js-cookie";
+import { useSelector } from "react-redux";
 import api from "@/app/helpers/api";
 import FormDialog from "./FormDialog";
 import PromptForm from "./PromptForm/PromptForm";
 import SelectForm from "./SelectForm/SelectForm";
-import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type Props = {
   setJobNames: Dispatch<SetStateAction<never[]>>;
@@ -31,7 +33,7 @@ export default function Form({
 
   const [promptForm, setPromptForm] = useState(false);
   const [login, setLogin] = useState(false);
-  const [haveApi, setHaveApi] = useState(false);
+  const hasApiKey = useSelector((state: any) => state.apiKey.hasApiKey);
 
   useEffect(() => {
     const name = searchParams.get("name");
@@ -44,13 +46,6 @@ export default function Form({
   useEffect(() => {
     const token = Cookies.get("token");
     if (token) setLogin(true);
-    else return;
-    const fetchApiDetails = async () => {
-      const response = await api.post("/auth/details/");
-      const user = response.data;
-      setHaveApi(user.gemini_api && true);
-    };
-    fetchApiDetails();
   }, []);
 
   const handleSubmit = async (
@@ -93,15 +88,9 @@ export default function Form({
           Find jobs or courses for your career!
         </h3>
         {promptForm ? (
-          !login ? (
-            <span className="my-5">
-              You must need to{" "}
-              <Link href="/login" className="text-blue-500">
-                login
-              </Link>{" "}
-              to use prompt box
-            </span>
-          ) : !haveApi ? (
+          hasApiKey ? (
+            <PromptForm submitForm={handleSubmit} />
+          ) : login ? (
             <span className="my-5">
               You must need to add api key in{" "}
               <Link href="/settings" className="text-blue-500">
@@ -110,7 +99,13 @@ export default function Form({
               to use prompt box
             </span>
           ) : (
-            <PromptForm submitForm={handleSubmit} />
+            <span className="my-5">
+              You must need to{" "}
+              <Link href="/login" className="text-blue-500">
+                login
+              </Link>{" "}
+              to use prompt box
+            </span>
           )
         ) : (
           <SelectForm submitForm={handleSubmit} />
