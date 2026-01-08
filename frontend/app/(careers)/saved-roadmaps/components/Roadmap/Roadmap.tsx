@@ -4,7 +4,6 @@ import React, {
   CSSProperties,
   Dispatch,
   SetStateAction,
-  useEffect,
   useState,
 } from "react";
 
@@ -70,7 +69,7 @@ export default function Roadmap({
                 className="menu dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 shadow-sm"
               >
                 <Link
-                  href={"/courses?name=" + name}
+                  href={"/careers?type=course&name=" + name}
                   target="_blank"
                   className="btn btn-ghost rounded-lg"
                 >
