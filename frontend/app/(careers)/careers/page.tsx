@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Form from "../components/Form/Form";
 import Cards from "../components/Cards/Cards";
 import Loading from "../../components/Loading/Loading";
@@ -16,14 +16,16 @@ export default function Careers() {
 
   return (
     <main className="flex flex-col items-center pb-10">
-      <Form
-        setRoadmaps={setRoadmaps}
-        setJobNames={setJobNames}
-        setJobs={setJobs}
-        setCourses={setCourses}
-        setLoading={setLoading}
-        setPicked={setPicked}
-      />
+      <Suspense fallback={<Loading />}>
+        <Form
+          setRoadmaps={setRoadmaps}
+          setJobNames={setJobNames}
+          setJobs={setJobs}
+          setCourses={setCourses}
+          setLoading={setLoading}
+          setPicked={setPicked}
+        />
+      </Suspense>
       {picked === -1 ? (
         roadmaps &&
         roadmaps.length > 0 && (
