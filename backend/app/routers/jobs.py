@@ -43,7 +43,7 @@ async def get_saved_jobs(user_id: str = Depends(get_user_id)):
     return schemas.Jobs(jobs=await db.get_saved_jobs(user_id))
 
 
-@router.post("/predict_salary", response_model=schemas.Salary)
+@router.post("/predict_salary/", response_model=schemas.Salary)
 async def predict_salary(details: schemas.Id, user_id: str = Depends(get_user_id)):
     api_key = await db.get_api(user_id)
     if not api_key:

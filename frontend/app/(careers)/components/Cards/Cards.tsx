@@ -2,6 +2,7 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import api from "@/app/helpers/api";
+import { useSelector } from "react-redux";
 
 type JobType = {
   id: string;
@@ -25,6 +26,7 @@ type CourseType = {
 };
 
 function JobCard({ job, saveStatus }: { job: JobType; saveStatus: boolean }) {
+  const hasApiKey = useSelector((state: any) => state.apiKey.hasApiKey);
   const isLogin = Boolean(Cookies.get("token"));
   const [saved, isSaved] = useState(false);
 
@@ -60,13 +62,18 @@ function JobCard({ job, saveStatus }: { job: JobType; saveStatus: boolean }) {
           salary + " per month"
         ) : (
           <>
-            Not disclosed,{" "}
-            <span
-              onClick={(e) => predictSalary(e)}
-              className="cursor-pointer text-blue-600"
-            >
-              predict salary
-            </span>
+            Not disclosed
+            {hasApiKey && (
+              <>
+                {", "}
+                <span
+                  onClick={(e) => predictSalary(e)}
+                  className="cursor-pointer text-blue-600"
+                >
+                  predict salary
+                </span>
+              </>
+            )}
           </>
         )}
       </span>
