@@ -9,14 +9,20 @@ import api from "@/app/helpers/api";
 
 function StoreInit() {
   const dispatch = useDispatch();
-  useEffect(() => {
-    const fetchApiStatus = async () => {
-      const token = Cookies.get("token");
-      if (!token) return;
+
+  const fetchApiStatus = async () => {
+    try {
       const response = await api.post("/auth/details/");
       const user = response.data;
       dispatch(setHasApiKey(Boolean(user?.gemini_api)));
-    };
+    } catch (e: any) {
+      if (e?.status === 404) Cookies.remove("token");
+    }
+  };
+
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (!token) return;
     fetchApiStatus();
   }, []);
   return null;
