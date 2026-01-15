@@ -37,10 +37,23 @@ cd career-assistant
 
 #### Backend
 
+using uv (recommended)
+
+```bash
+cd backend
+uv add -r requirements.txt
+uv run fastapi dev
+```
+
+using pip
+
 ```bash
 cd backend
 pip3 install -r requirements.txt
+fastapi dev
 ```
+
+The backend server will run at http://localhost:8000
 
 #### Frontend
 
@@ -50,6 +63,8 @@ npm install
 # Run the development server
 npm run dev
 ```
+
+The frontend server will run at http://localhost:3000
 
 ---
 
