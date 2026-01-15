@@ -66,25 +66,25 @@ export default function Roadmap({
               </button>
               <ul
                 tabIndex={-1}
-                className="menu dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 shadow-sm"
+                className="menu dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 border-(length:--border) border-white/5 shadow-2xl outline-(length:--border) outline-black/5"
               >
                 <Link
                   href={"/careers?type=course&name=" + name}
                   target="_blank"
-                  className="btn btn-ghost rounded-lg"
+                  className="btn btn-ghost rounded-xl"
                 >
                   Get Courses
                 </Link>
                 {learnedCourses.has(name) ? (
                   <div
-                    className="btn btn-ghost rounded-lg"
+                    className="btn btn-ghost rounded-xl"
                     onClick={() => removeFromLearned(name)}
                   >
                     Remove from learned
                   </div>
                 ) : (
                   <div
-                    className="btn btn-ghost rounded-lg"
+                    className="btn btn-ghost rounded-xl"
                     onClick={() => markAsLearned(name)}
                   >
                     Mark as learned

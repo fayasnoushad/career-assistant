@@ -9,24 +9,24 @@ import UserDetails from "./UserDetails";
 export default function Header() {
   const [loginStatus, setLoginStatus] = useState(false);
 
-  useEffect(() => {
+  const check = async () => {
     const token = Cookies.get("token");
-    const check = async () => {
-      if (token) {
-        try {
-          const decoded = jwtDecode(token);
-          if (decoded.exp && decoded.exp * 1000 > Date.now()) {
-            setLoginStatus(true);
-          } else {
-            Cookies.remove("token");
-          }
-        } catch {
-          setLoginStatus(false);
-        }
-      }
-    };
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        if (decoded.exp && decoded.exp * 1000 > Date.now()) {
+          setLoginStatus(true);
+          return;
+        } else Cookies.remove("token");
+      } catch {}
+      setLoginStatus(false);
+    }
+  };
+
+  useEffect(() => {
     check();
   }, []);
+
   return (
     <header className="navbar min-h-[10vh] bg-base-300 shadow-sm px-3 md:px-7 py-2">
       <Link href="/" className="text-2xl font-bold">
