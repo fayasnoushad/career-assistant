@@ -28,6 +28,14 @@ Career Assistant is a web application designed to find courses, roadmaps, and jo
 
 ### Getting Started
 
+#### Prerequisites
+
+- Python 3
+- Node.js
+- pnpm / npm
+- uv (recommended for Python environment management)
+- MongoDB instance (local or cloud)
+
 Clone the repository and follow the setup instructions for both the backend and frontend.
 
 ```bash
@@ -41,14 +49,17 @@ using uv (recommended)
 
 ```bash
 cd backend
+uv venv
 uv add -r requirements.txt
 uv run fastapi dev
 ```
 
-using pip
+using pip (alternative)
 
 ```bash
 cd backend
+python3 -m venv .venv
+source .venv/bin/activate
 pip3 install -r requirements.txt
 fastapi dev
 ```
@@ -56,6 +67,17 @@ fastapi dev
 The backend server will run at http://localhost:8000
 
 #### Frontend
+
+using pnpm (recommended)
+
+```bash
+cd frontend
+pnpm install
+# Run the development server
+pnpm dev
+```
+
+using npm (alternative)
 
 ```bash
 cd frontend
