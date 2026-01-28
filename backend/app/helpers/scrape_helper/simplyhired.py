@@ -24,7 +24,7 @@ def get_salary(salary_text: str) -> int:
     return int(salary)
 
 
-def parse(job_name: str, driver: webdriver.Firefox) -> List[dict]:
+def parse(job_name: str, driver: webdriver.Chrome) -> List[dict]:
     url = URL.format(job_name.replace(" ", "+"))
     driver.get(url)
     jobs = []
