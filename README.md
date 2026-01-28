@@ -35,6 +35,7 @@ Career Assistant is a web application designed to find courses, roadmaps, and jo
 - pnpm / npm
 - uv (recommended for Python environment management)
 - MongoDB instance (local or cloud)
+- Chromium, Chromium Driver (for Selenium)
 
 Clone the repository and follow the setup instructions for both the backend and frontend.
 

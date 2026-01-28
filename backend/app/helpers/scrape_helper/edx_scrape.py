@@ -36,7 +36,7 @@ def get_course_details(card: WebElement):
     return course_data
 
 
-def parse(driver: webdriver.Firefox, name: str) -> List[dict]:
+def parse(driver: webdriver.Chrome, name: str) -> List[dict]:
     courses = []
     course_links = set()
     url = URL.format(name)

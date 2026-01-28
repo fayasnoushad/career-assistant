@@ -11,7 +11,7 @@ from ...configs import MIN_JOB_LIMIT as LIMIT
 URL = "https://www.naukri.com/{}"
 
 
-def get_job_details(driver: webdriver.Firefox, link: str) -> tuple[str, str]:
+def get_job_details(driver: webdriver.Chrome, link: str) -> tuple[str, str]:
     driver.get(link)
     WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.ID, "job_header"))
@@ -37,7 +37,7 @@ def get_job_details(driver: webdriver.Firefox, link: str) -> tuple[str, str]:
     return (location or "", "\n\n".join(description).strip())
 
 
-def parse(job_name: str, driver: webdriver.Firefox) -> List[dict]:
+def parse(job_name: str, driver: webdriver.Chrome) -> List[dict]:
     url = URL.format(job_name.replace(" ", "-") + "-jobs")
     driver.get(url)
     WebDriverWait(driver, 10).until(
