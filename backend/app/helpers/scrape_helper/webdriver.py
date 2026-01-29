@@ -1,18 +1,24 @@
+# webdriver.py
 import os
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from ...configs import DEV_MODE
 
 
-options = Options()
+def running_in_container() -> bool:
+    return os.path.exists("/.dockerenv") or os.path.exists("/run/.containerenv")
 
 
-if not DEV_MODE:
-    options.add_argument("--headless")
+def get_web_driver():
+    options = Options()
+    options.binary_location = "/usr/bin/chromium"
 
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
+    # Always headless in containers
+    if running_in_container() or not DEV_MODE:
+        options.add_argument("--headless=new")
 
+    if running_in_container():
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-dev-shm-usage")
 
-async def get_web_driver():
     return webdriver.Chrome(options=options)

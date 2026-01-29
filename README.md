@@ -33,7 +33,8 @@ Career Assistant is a web application designed to find courses, roadmaps, and jo
 - Python 3
 - Node.js
 - pnpm / npm
-- uv (recommended for Python environment management)
+- uv (recommended for local Python environment management)
+- Podman / Docker (for containerization)
 - MongoDB instance (local or cloud)
 - Chromium, Chromium Driver (for Selenium)
 
@@ -46,7 +47,19 @@ cd career-assistant
 
 #### Backend
 
-using uv (recommended)
+##### using Podman / Docker
+
+```bash
+cd backend
+podman build -t career-assistant-backend .
+podman run --rm --env-file .env -p 8000:8000 career-assistant
+```
+
+> Docker users can replace `podman` with `docker` in the above commands.
+
+> Note: Make sure to set up your `.env` file with the necessary environment variables before running the container.
+
+##### using uv (recommended for local Python environment management)
 
 ```bash
 cd backend
@@ -55,7 +68,7 @@ uv add -r requirements.txt
 uv run fastapi dev
 ```
 
-using pip (alternative)
+##### using pip (alternative)
 
 ```bash
 cd backend
@@ -69,7 +82,7 @@ The backend server will run at http://localhost:8000
 
 #### Frontend
 
-using pnpm (recommended)
+##### using pnpm (recommended)
 
 ```bash
 cd frontend
@@ -78,7 +91,7 @@ pnpm install
 pnpm dev
 ```
 
-using npm (alternative)
+##### using npm (alternative)
 
 ```bash
 cd frontend

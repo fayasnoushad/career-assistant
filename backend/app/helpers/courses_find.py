@@ -1,10 +1,10 @@
-from typing import List
 from .. import schemas
 from ..database import db
 from ..configs import MIN_COURSE_LIMIT
 from .scrape_helper import edx_scrape
 from .scrape_helper import youtube_scrape
 from .roadmaps import get_roadmaps
+from fastapi.concurrency import run_in_threadpool
 from .scrape_helper.webdriver import get_web_driver
 
 
@@ -16,7 +16,7 @@ async def get_courses(name: str) -> schemas.Courses:
             course_links.add(course.get("link"))
             courses.append(course)
     if len(courses) < MIN_COURSE_LIMIT:
-        driver = await get_web_driver()
+        driver = await run_in_threadpool(get_web_driver)
         edx_courses = edx_scrape.parse(driver, name)
         ids = await db.add_courses(edx_courses)
         for i in range(len(ids)):
