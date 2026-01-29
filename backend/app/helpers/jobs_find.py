@@ -1,10 +1,10 @@
-from typing import List
 from .. import schemas
 from ..database import db
 from ..configs import MIN_JOB_LIMIT
-from .scrape_helper.webdriver import get_web_driver
 from .job_prompt_details import get_job_names
 from .scrape_helper import simplyhired, naukri
+from fastapi.concurrency import run_in_threadpool
+from .scrape_helper.webdriver import get_web_driver
 
 
 async def get_jobs(name: str) -> schemas.Jobs:
@@ -20,7 +20,7 @@ async def get_jobs(name: str) -> schemas.Jobs:
 
     # if number of jobs are low, then scrape
     if len(jobs) < MIN_JOB_LIMIT:
-        driver = await get_web_driver()
+        driver = await run_in_threadpool(get_web_driver)
         job_list.clear()
         job_list.extend(simplyhired.parse(name, driver))
         job_list.extend(naukri.parse(name, driver))
