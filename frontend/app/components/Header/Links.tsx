@@ -1,47 +1,31 @@
 import Link from "next/link";
 
 export default function Links() {
+  const links = [
+    { href: "/careers/", label: "Jobs or Courses", icon: "🎯" },
+    { href: "/saved-jobs", label: "Saved Jobs", icon: "💼" },
+    { href: "/saved-courses", label: "Saved Courses", icon: "📚" },
+    { href: "/saved-roadmaps", label: "Saved Roadmaps", icon: "🗺️" },
+    { href: "/settings", label: "Settings", icon: "⚙️" },
+    { href: "/logout", label: "Logout", icon: "🚪" },
+  ];
+
   return (
     <ul
       tabIndex={-1}
-      className="menu dropdown-content bg-base-200 rounded-box z-1 mt-4 w-52 p-2 border-(length:--border) border-white/5 shadow-2xl outline-(length:--border) outline-black/5"
+      className="menu dropdown-content bg-base-100/95 backdrop-blur-lg rounded-2xl z-50 mt-4 w-56 p-3 border border-base-300 shadow-2xl animate-scaleIn"
     >
-      <Link
-        href="/careers/"
-        className="font-semibold p-3 w-full rounded-2xl hover:bg-base-300"
-      >
-        Jobs or Courses
-      </Link>
-      <Link
-        href="/saved-jobs"
-        className="font-semibold p-3 w-full rounded-2xl hover:bg-base-300"
-      >
-        Saved Jobs
-      </Link>
-      <Link
-        href="/saved-courses"
-        className="font-semibold p-3 w-full rounded-2xl hover:bg-base-300"
-      >
-        Saved Courses
-      </Link>
-      <Link
-        href="/saved-roadmaps"
-        className="font-semibold p-3 w-full rounded-2xl hover:bg-base-300"
-      >
-        Saved Roadmaps
-      </Link>
-      <Link
-        href="/settings"
-        className="font-semibold p-3 w-full rounded-2xl hover:bg-base-300"
-      >
-        Settings
-      </Link>
-      <Link
-        href="/logout"
-        className="font-semibold p-3 w-full rounded-2xl hover:bg-base-300"
-      >
-        Logout
-      </Link>
+      {links.map((link, index) => (
+        <li key={index} className="mb-1">
+          <Link
+            href={link.href}
+            className="font-semibold p-3 rounded-xl hover:bg-linear-to-r hover:from-purple-500/10 hover:to-blue-500/10 hover:text-purple-600 transition-all duration-300 flex items-center gap-3"
+          >
+            <span className="text-xl">{link.icon}</span>
+            {link.label}
+          </Link>
+        </li>
+      ))}
     </ul>
   );
 }

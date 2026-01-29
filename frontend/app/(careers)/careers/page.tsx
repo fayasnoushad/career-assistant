@@ -29,21 +29,23 @@ export default function Careers() {
       {picked === -1 ? (
         roadmaps &&
         roadmaps.length > 0 && (
-          <div className="my-5 p-2 bg-base-200 rounded md:mx-30">
-            <span className="text-xl text-center block my-2">
-              Pick one roadmap
-            </span>
-            {roadmaps.map((roadmap, index: number) => (
-              <Roadmap
-                key={index}
-                roadmap={roadmap}
-                setContent={setCourses}
-                setLoading={setLoading}
-                disabled={true}
-                setPicked={setPicked}
-                index={index}
-              />
-            ))}
+          <div className="my-8 p-6 bg-linear-to-br from-base-100 to-base-200 rounded-3xl shadow-xl border border-base-300 md:mx-30 max-w-4xl animate-fadeIn">
+            <h3 className="text-2xl font-bold text-center mb-6 bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              Pick one roadmap to continue
+            </h3>
+            <div className="space-y-3">
+              {roadmaps.map((roadmap, index: number) => (
+                <Roadmap
+                  key={index}
+                  roadmap={roadmap}
+                  setContent={setCourses}
+                  setLoading={setLoading}
+                  disabled={true}
+                  setPicked={setPicked}
+                  index={index}
+                />
+              ))}
+            </div>
           </div>
         )
       ) : (

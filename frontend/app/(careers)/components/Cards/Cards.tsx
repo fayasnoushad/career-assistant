@@ -49,50 +49,68 @@ function JobCard({ job, saveStatus }: { job: JobType; saveStatus: boolean }) {
 
   return (
     <div className="card-body">
-      <h2 className="card-title mb-2">{job.name}</h2>
-      <span>
-        <b>Company:</b> {job.company}
-      </span>
-      <span>
-        <b>Location:</b> {job.location ? job.location : "Not found"}
-      </span>
-      <span>
-        <b>Salary:</b>{" "}
-        {salary ? (
-          salary + " per month"
-        ) : (
-          <>
-            Not disclosed
-            {hasApiKey && (
+      <h2 className="card-title mb-3 text-xl font-bold bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+        {job.name}
+      </h2>
+      <div className="space-y-2 text-base-content/80">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">🏢</span>
+          <span>
+            <b>Company:</b> {job.company}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-lg">📍</span>
+          <span>
+            <b>Location:</b> {job.location ? job.location : "Not found"}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-lg">💰</span>
+          <span>
+            <b>Salary:</b>{" "}
+            {salary ? (
+              <span className="text-green-600 font-semibold">
+                {salary} per month
+              </span>
+            ) : (
               <>
-                {", "}
-                <span
-                  onClick={(e) => predictSalary(e)}
-                  className="cursor-pointer text-blue-600"
-                >
-                  predict salary
-                </span>
+                Not disclosed
+                {hasApiKey && (
+                  <>
+                    {", "}
+                    <span
+                      onClick={(e) => predictSalary(e)}
+                      className="cursor-pointer text-purple-600 hover:text-purple-700 font-medium underline"
+                    >
+                      predict salary
+                    </span>
+                  </>
+                )}
               </>
             )}
-          </>
-        )}
-      </span>
-      <span>
-        <b>Description: </b>
-        <span
-          className="cursor-pointer text-blue-600"
-          onClick={() => {
-            const modal = document.getElementById(
-              `description-modal-${job.id}`
-            );
-            if (modal) {
-              (modal as HTMLDialogElement).showModal();
-            }
-          }}
-        >
-          show description
-        </span>
-      </span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-lg">📄</span>
+          <span>
+            <b>Description: </b>
+            <span
+              className="cursor-pointer text-purple-600 hover:text-purple-700 font-medium underline"
+              onClick={() => {
+                const modal = document.getElementById(
+                  `description-modal-${job.id}`,
+                );
+                if (modal) {
+                  (modal as HTMLDialogElement).showModal();
+                }
+              }}
+            >
+              show description
+            </span>
+          </span>
+        </div>
+      </div>
       <dialog id={`description-modal-${job.id}`} className="modal">
         <div className="modal-box md:min-w-3/5 h-[60%]">
           <h3 className="font-bold text-lg m-2 md:mx-4 lg:mx-6">{job.name}</h3>
@@ -111,10 +129,14 @@ function JobCard({ job, saveStatus }: { job: JobType; saveStatus: boolean }) {
           </div>
         </div>
       </dialog>
-      <div className="flex justify-center md:justify-end card-actions pt-4">
+      <div className="flex justify-center md:justify-end card-actions pt-5 gap-2">
         {isLogin && (
           <button
-            className="btn btn-soft btn-sm md:btn-md rounded-lg"
+            className={`btn btn-sm md:btn-md rounded-full transition-all duration-300 transform hover:scale-105 ${
+              saved
+                ? "bg-linear-to-r from-pink-500 to-rose-500 text-white border-0 hover:from-pink-600 hover:to-rose-600"
+                : "btn-outline border-2"
+            }`}
             onClick={toggleSaved}
           >
             <svg
@@ -123,7 +145,7 @@ function JobCard({ job, saveStatus }: { job: JobType; saveStatus: boolean }) {
               viewBox="0 0 24 24"
               strokeWidth="2.5"
               stroke="currentColor"
-              className="size-[1.2em]"
+              className="size-5"
             >
               <path
                 strokeLinecap="round"
@@ -131,15 +153,15 @@ function JobCard({ job, saveStatus }: { job: JobType; saveStatus: boolean }) {
                 d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
               />
             </svg>
-            {saved ? "Unsave" : "Save"}
+            {saved ? "Saved" : "Save"}
           </button>
         )}
         <Link
           href={job.link}
           target="_blank"
-          className="btn btn-soft btn-sm md:btn-md rounded-lg"
+          className="btn btn-sm md:btn-md bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
         >
-          Open in Job Website
+          View Job
         </Link>
       </div>
     </div>
@@ -167,23 +189,45 @@ function CourseCard({
 
   return (
     <div className="card-body">
-      <h3 className="card-title mb-2">{course.title}</h3>
-      <span>
-        <b>Channel:</b>{" "}
-        <Link href={course.channel_link} target="_blank">
-          {course.channel}
-        </Link>
-      </span>
-      <span>
-        <b>Duration:</b> {course.duration ? course.duration : "Not specified"}
-      </span>
-      <span>
-        <b>Level:</b> {course.level ? course.level : "Not specified"}
-      </span>
-      <div className="flex justify-center md:justify-end card-actions pt-4">
+      <h3 className="card-title mb-3 text-xl font-bold bg-linear-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+        {course.title}
+      </h3>
+      <div className="space-y-2 text-base-content/80">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">📺</span>
+          <span>
+            <b>Channel:</b>{" "}
+            <Link
+              href={course.channel_link}
+              target="_blank"
+              className="text-purple-600 hover:text-purple-700 font-medium underline"
+            >
+              {course.channel}
+            </Link>
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-lg">⏱️</span>
+          <span>
+            <b>Duration:</b>{" "}
+            {course.duration ? course.duration : "Not specified"}
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-lg">📊</span>
+          <span>
+            <b>Level:</b> {course.level ? course.level : "Not specified"}
+          </span>
+        </div>
+      </div>
+      <div className="flex justify-center md:justify-end card-actions pt-5 gap-2">
         {isLogin && (
           <button
-            className="btn btn-soft btn-sm md:btn-md rounded-lg"
+            className={`btn btn-sm md:btn-md rounded-full transition-all duration-300 transform hover:scale-105 ${
+              saved
+                ? "bg-linear-to-r from-pink-500 to-rose-500 text-white border-0 hover:from-pink-600 hover:to-rose-600"
+                : "btn-outline border-2"
+            }`}
             onClick={toggleSaved}
           >
             <svg
@@ -192,7 +236,7 @@ function CourseCard({
               viewBox="0 0 24 24"
               strokeWidth="2.5"
               stroke="currentColor"
-              className="size-[1.2em]"
+              className="size-5"
             >
               <path
                 strokeLinecap="round"
@@ -200,15 +244,15 @@ function CourseCard({
                 d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
               />
             </svg>
-            {saved ? "Unsave" : "Save"}
+            {saved ? "Saved" : "Save"}
           </button>
         )}
         <Link
           href={course.link}
           target="_blank"
-          className="btn btn-soft btn-sm md:btn-md rounded-lg"
+          className="btn btn-sm md:btn-md bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0 rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
         >
-          Open in Course Website
+          View Course
         </Link>
       </div>
     </div>
@@ -232,10 +276,10 @@ export default function Cards({
       const savedSet = new Set();
       type === "job"
         ? response.data.jobs.map((savedJob: JobType) =>
-            savedSet.add(savedJob.id)
+            savedSet.add(savedJob.id),
           )
         : response.data.courses.map((savedCourse: CourseType) =>
-            savedSet.add(savedCourse.id)
+            savedSet.add(savedCourse.id),
           );
       setSavedCareers(savedSet);
     };
@@ -243,9 +287,13 @@ export default function Cards({
   }, []);
 
   return (
-    <div className="m-5 md:mx-20 lg:mx-30 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center items-center">
+    <div className="m-5 md:mx-20 lg:mx-30 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center items-stretch animate-fadeIn">
       {content.map((career, index) => (
-        <div className="card card-md bg-base-200 shadow-sm w-full" key={index}>
+        <div
+          className="card bg-base-100 shadow-xl hover:shadow-2xl w-full border border-base-300 rounded-2xl modern-card overflow-hidden"
+          key={index}
+          style={{ animationDelay: `${index * 0.1}s` }}
+        >
           {type === "job" ? (
             <JobCard
               job={career as JobType}
