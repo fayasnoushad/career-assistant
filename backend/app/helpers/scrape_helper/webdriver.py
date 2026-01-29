@@ -11,11 +11,12 @@ def running_in_container() -> bool:
 
 def get_web_driver():
     options = Options()
-    options.binary_location = "/usr/bin/chromium"
 
     # Always headless in containers
-    if running_in_container() or not DEV_MODE:
-        options.add_argument("--headless=new")
+    if running_in_container():
+        options.binary_location = "/usr/bin/chromium"
+        if not DEV_MODE:
+            options.add_argument("--headless=new")
 
     if running_in_container():
         options.add_argument("--no-sandbox")
