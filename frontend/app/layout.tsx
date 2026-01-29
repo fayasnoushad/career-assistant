@@ -4,6 +4,7 @@ import Providers from "@/store/provider";
 import { ThemeProvider } from "next-themes";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
+import UniversalModal from "./components/Modal/UniversalModal";
 
 export const metadata: Metadata = {
   title: "Careeer Assistant",
@@ -26,6 +27,7 @@ export default function RootLayout({
           <Header />
           <Providers>{children}</Providers>
           <Footer />
+          <UniversalModal />
         </ThemeProvider>
       </body>
     </html>

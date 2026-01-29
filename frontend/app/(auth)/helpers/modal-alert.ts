@@ -1,5 +1,12 @@
-export default function modalAlert(text: string, setText: any) {
-  setText(text);
-  const modal = document.getElementById("auth-modal");
-  if (modal) (modal as HTMLDialogElement).showModal();
+import { showModal } from "@/app/helpers/modal-manager";
+
+export default function modalAlert(text: string, setText?: any) {
+  if (setText) {
+    setText(text);
+  }
+  showModal({
+    message: text,
+    type: "info",
+    onConfirm: () => {},
+  });
 }

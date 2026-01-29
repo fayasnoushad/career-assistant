@@ -1,5 +1,6 @@
 import api from "@/app/helpers/api";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { showModal } from "@/app/helpers/modal-manager";
 
 interface Props {
   roadmap: string[];
@@ -43,7 +44,12 @@ export default function Roadmap({
 
   const save = async () => {
     await api.post("/courses/save_roadmap/", { roadmap });
-    alert("Roadmap saved");
+    showModal({
+      title: "Success",
+      message: "Roadmap saved successfully!",
+      type: "success",
+      onConfirm: () => {},
+    });
   };
 
   return (

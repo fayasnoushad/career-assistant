@@ -1,6 +1,6 @@
 import modalAlert from "./modal-alert";
 
-export default function handleError(error: unknown, setError: any) {
+export default function handleError(error: unknown) {
   if (typeof error === "object" && error !== null && "response" in error) {
     const response = (
       error as {
@@ -16,8 +16,7 @@ export default function handleError(error: unknown, setError: any) {
         (response?.statusText
           ? `[${response?.status}] ${response?.statusText}`
           : "Something wrong"),
-      setError
     );
   }
-  modalAlert("Something wrong", setError);
+  modalAlert("Something wrong");
 }

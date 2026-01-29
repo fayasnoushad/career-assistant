@@ -3,6 +3,7 @@ import api from "@/app/helpers/api";
 import { useEffect, useState } from "react";
 import Roadmap from "./components/Roadmap/Roadmap";
 import Loading from "@/app/components/Loading/Loading";
+import { showModal } from "@/app/helpers/modal-manager";
 
 type Roadmap = {
   id: string;
@@ -27,14 +28,24 @@ export default function SavedRoadmaps() {
   }, []);
 
   const removeRoadmap = async (roadmapId: string) => {
-    const confimation = confirm(
-      "Are you sure that you want to remove the roadmap?"
-    );
-    if (!confimation) return;
-    await api.post("/courses/remove_roadmap/", { id: roadmapId });
-    setRoadmaps((prevRoadmaps) =>
-      prevRoadmaps.filter((roadmap) => roadmap.id !== roadmapId)
-    );
+    showModal({
+      title: "Delete Roadmap",
+      message:
+        "Are you sure you want to remove this roadmap? This action cannot be undone.",
+      type: "confirm",
+      onConfirm: async () => {
+        await api.post("/courses/remove_roadmap/", { id: roadmapId });
+        setRoadmaps((prevRoadmaps) =>
+          prevRoadmaps.filter((roadmap) => roadmap.id !== roadmapId),
+        );
+        showModal({
+          title: "Deleted",
+          message: "Roadmap removed successfully!",
+          type: "success",
+          onConfirm: () => {},
+        });
+      },
+    });
   };
 
   return (

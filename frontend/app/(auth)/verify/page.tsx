@@ -4,14 +4,11 @@ import Cookies from "js-cookie";
 import api from "@/app/helpers/api";
 import { useSearchParams } from "next/navigation";
 import handleError from "../helpers/handle-error";
-import AuthModal from "../components/AuthModal";
 import modalAlert from "../helpers/modal-alert";
 
 export default function VerifyAccount() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
-  const [modalText, setModalText] = useState("");
-
   const verify = async () => {
     const params = { token };
     try {
@@ -19,16 +16,16 @@ export default function VerifyAccount() {
       if (response.status === 201) {
         Cookies.set("token", response.data.access_token);
         Cookies.set("admin", response.data.admin);
-        modalAlert("Account Created Successfully", setModalText);
+        modalAlert("Account Created Successfully");
         setTimeout(() => (window.location.href = "/"), 3000);
       }
     } catch (error: unknown) {
-      handleError(error, setModalText);
+      handleError(error);
     }
   };
 
   const abort = () => {
-    modalAlert("Account Creation Aborted", setModalText);
+    modalAlert("Account Creation Aborted");
     setTimeout(() => (window.location.href = "/"), 3000);
   };
 
@@ -45,7 +42,6 @@ export default function VerifyAccount() {
           No
         </button>
       </div>
-      <AuthModal modalText={modalText} />
     </div>
   );
 }

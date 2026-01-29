@@ -3,6 +3,7 @@ import api from "../helpers/api";
 import { useDispatch } from "react-redux";
 import { setHasApiKey } from "@/store/slices/apiKeySlice";
 import React, { useEffect, useState } from "react";
+import { showModal } from "@/app/helpers/modal-manager";
 
 export default function Settings() {
   const [fName, setFName] = useState("");
@@ -30,7 +31,12 @@ export default function Settings() {
     };
     await api.patch("/auth/update/", data);
     dispatch(setHasApiKey(apiKey.length > 0));
-    alert("Updated Successfully");
+    showModal({
+      title: "Success",
+      message: "Settings updated successfully!",
+      type: "success",
+      onConfirm: () => {},
+    });
   };
 
   return (

@@ -5,7 +5,6 @@ import Link from "next/link";
 import api from "@/app/helpers/api";
 import { useRouter } from "next/navigation";
 import handleError from "../helpers/handle-error";
-import AuthModal from "./AuthModal";
 import modalAlert from "../helpers/modal-alert";
 import Loading from "@/app/components/Loading/Loading";
 
@@ -21,11 +20,9 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isPasswordWrong, setIsPasswordWrong] = useState(false);
-  const [modalText, setModalText] = useState("");
-
   const [loading, setLoading] = useState(false);
 
-  const raise = (text: string) => modalAlert(text, setModalText);
+  const raise = (text: string) => modalAlert(text);
   const register = async () => {
     if (password !== confirmPassword) return setIsPasswordWrong(true);
     if (!(fName && email && password)) return raise("Enter required fields");
@@ -43,7 +40,7 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
         router.push("/pending");
       }
     } catch (error: unknown) {
-      handleError(error, setModalText);
+      handleError(error);
     }
     setLoading(false);
   };
@@ -63,7 +60,7 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
         window.location.href = "/"; // to reload
       }
     } catch (error) {
-      handleError(error, setModalText);
+      handleError(error);
     }
     setLoading(false);
   };
@@ -218,7 +215,6 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
           </div>
         </form>
       )}
-      <AuthModal modalText={modalText} />
     </>
   );
 }
