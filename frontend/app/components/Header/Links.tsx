@@ -2,6 +2,7 @@ import Link from "next/link";
 
 export default function Links() {
   const links = [
+    { href: "/dashboard", label: "Dashboard", icon: "📊" },
     { href: "/careers/", label: "Jobs or Courses", icon: "🎯" },
     { href: "/resume", label: "Resume Analysis", icon: "📄" },
     { href: "/saved-jobs", label: "Saved Jobs", icon: "💼" },

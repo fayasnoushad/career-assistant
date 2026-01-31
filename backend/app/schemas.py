@@ -14,6 +14,7 @@ class User(BaseModel):
     last_name: Optional[str] = ""
     email: EmailStr
     gemini_api: Optional[str] = ""
+    career_goal: Optional[str] = ""
     admin: Optional[bool] = False
 
 
@@ -21,6 +22,7 @@ class UserUpdate(BaseModel):
     first_name: str
     last_name: Optional[str] = ""
     gemini_api: Optional[str] = ""
+    career_goal: Optional[str] = ""
 
 
 class UserLogin(BaseModel):
@@ -147,3 +149,14 @@ class ResumeAnalysis(BaseModel):
 
 class ResumeAnalysisList(BaseModel):
     analyses: List[ResumeAnalysis]
+
+
+class DashboardData(BaseModel):
+    career_goal: Optional[str] = None
+    resume_score: Optional[int] = None
+    score_trend: Optional[int] = None
+    resume_scores_history: List[int] = []
+    saved_jobs_count: int = 0
+    roadmap_progress: float = 0.0
+    total_roadmap_steps: int = 0
+    learned_courses_count: int = 0

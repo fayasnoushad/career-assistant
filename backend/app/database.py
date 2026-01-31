@@ -69,6 +69,7 @@ class Database:
                     "first_name": data.first_name,
                     "last_name": data.last_name,
                     "gemini_api": data.gemini_api,
+                    "career_goal": data.career_goal,
                 }
             },
         )

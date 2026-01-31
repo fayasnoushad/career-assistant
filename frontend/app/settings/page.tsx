@@ -9,6 +9,7 @@ export default function Settings() {
   const [fName, setFName] = useState("");
   const [lName, setLName] = useState("");
   const [apiKey, setApiKey] = useState("");
+  const [careerGoal, setCareerGoal] = useState("");
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -18,6 +19,7 @@ export default function Settings() {
       setFName(user.first_name ?? "");
       setLName(user.last_name ?? "");
       setApiKey(user.gemini_api ?? "");
+      setCareerGoal(user.career_goal ?? "");
     };
     fetchData();
   }, []);
@@ -27,6 +29,7 @@ export default function Settings() {
     const data = {
       first_name: fName,
       last_name: lName,
+      career_goal: careerGoal,
       gemini_api: apiKey,
     };
     await api.patch("/auth/update/", data);
@@ -82,6 +85,24 @@ export default function Settings() {
             className="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-purple-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
           >
             Last name
+          </label>
+        </div>
+        <div className="relative z-0 w-full mb-5 group">
+          <input
+            type="text"
+            name="floating_career_goal"
+            id="floating_career_goal"
+            className="block py-2.5 px-0 w-full text-sm bg-transparent border-0 border-b-2 border-base-300 appearance-none focus:outline-none focus:ring-0 focus:border-purple-600 peer transition-colors duration-300"
+            placeholder=" "
+            value={careerGoal}
+            onChange={(e) => setCareerGoal(e.target.value)}
+            required={false}
+          />
+          <label
+            htmlFor="floating_career_goal"
+            className="peer-focus:font-medium absolute text-sm duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-left peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-purple-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+          >
+            Career Goal (e.g., Software Engineer)
           </label>
         </div>
         <div className="relative z-0 w-full mb-5 group">

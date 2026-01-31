@@ -14,6 +14,8 @@ Career Assistant is a web application designed to find courses, roadmaps, and jo
 - Save and manage your favorite courses, roadmaps, and jobs
 - Salary predictions for jobs where salary not disclosed
 - User-friendly interface with Next.js and Tailwind CSS
+- Analyze resumes with role and experience level, and provide feedback for improvement
+- Export analysed resume in PDF / DOCX format
 
 ---
 

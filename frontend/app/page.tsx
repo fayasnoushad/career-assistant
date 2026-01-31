@@ -45,7 +45,14 @@ export default function Home() {
             </svg>
             Find Jobs & Courses
           </Link>
-          {!loginStatus && (
+          {loginStatus ? (
+            <Link
+              className="btn btn-lg btn-outline rounded-full hover:bg-blue-500/10 hover:border-blue-500 transition-all duration-300"
+              href="/dashboard"
+            >
+              Go to Dashboard
+            </Link>
+          ) : (
             <Link
               className="btn btn-lg btn-outline rounded-full hover:bg-blue-500/10 hover:border-blue-500 transition-all duration-300"
               href="/login"

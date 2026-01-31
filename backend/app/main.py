@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from .routers import jobs, courses, auth, resumes
+from .routers import jobs, courses, auth, resumes, dashboard
 
 
 app = FastAPI(
@@ -24,6 +24,7 @@ app.include_router(jobs.router)
 app.include_router(courses.router)
 app.include_router(auth.router)
 app.include_router(resumes.router)
+app.include_router(dashboard.router)
 
 
 @app.get("/")
