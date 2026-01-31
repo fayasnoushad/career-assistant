@@ -38,6 +38,11 @@ class LoginStatus(BaseModel):
     status: bool
 
 
+class OTPVerify(BaseModel):
+    email: EmailStr
+    otp: str
+
+
 class Prompt(BaseModel):
     prompt: str
 

@@ -1,3 +1,4 @@
+import secrets
 import aiosmtplib
 from .. import schemas
 from pathlib import Path
@@ -16,8 +17,7 @@ from ..configs import (
     SUPER_ADMINS,
     EMAIL_USER,
     EMAIL_PASS,
-    EMAIL_TOKEN_EXPIRE_HOURS,
-    DOMAIN,
+    OTP_EXPIRE_MINUTES,
 )
 
 router = APIRouter(prefix="/auth", tags=["auth", "authentication"])
@@ -37,14 +37,8 @@ def verify_token(token: str):
         )
 
 
-def create_verification_token(email: str):
-    """
-    Only for registering an user account
-    """
-    expires_hours = EMAIL_TOKEN_EXPIRE_HOURS
-    expire = datetime.now(timezone.utc) + timedelta(hours=expires_hours)
-    data = {"sub": email, "exp": expire}  # when registering email is the subject
-    return jwt.encode(data, SECRET_KEY, algorithm=ALGORITHM)
+def generate_otp() -> str:
+    return str(secrets.randbelow(10**6)).zfill(6)
 
 
 def create_access_token(
@@ -98,16 +92,15 @@ def require_super_admin(user=Depends(get_current_user)):
     raise HTTPException(status_code=403, detail="Super admin access required")
 
 
-async def send_verification_email(to_email: str, token: str):
-    verify_link = f"http://{DOMAIN}/verify/?token={token}"
+async def send_verification_email(to_email: str, otp: str):
     message = EmailMessage()
     message["From"] = EMAIL_USER
     message["To"] = to_email
-    message["Subject"] = "Verify your email"
-    message.set_content(f"Click the link to verify your account: {verify_link}")
+    message["Subject"] = "Your verification code"
+    message.set_content(f"Use this OTP to verify your account: {otp}")
     template_path = Path(__file__).resolve().parent.parent / "templates" / "verify.html"
     html_content = template_path.read_text(encoding="utf-8").format(
-        verify_link=verify_link
+        otp=otp, otp_exp_minutes=OTP_EXPIRE_MINUTES
     )
     message.add_alternative(html_content, subtype="html")
     await aiosmtplib.send(
@@ -126,6 +119,8 @@ async def register_user(user: schemas.UserCreate):
     existing_user = await db.get_user(email=user.email.lower())
     if existing_user:
         raise HTTPException(status_code=409, detail="User already exists")
+    otp = generate_otp()
+    otp_exp = datetime.now(timezone.utc) + timedelta(minutes=OTP_EXPIRE_MINUTES)
     await db.add_pending_user(
         dict(
             first_name=user.first_name,
@@ -133,10 +128,11 @@ async def register_user(user: schemas.UserCreate):
             email=user.email.lower(),
             password=sha256_crypt.hash(user.password),
             admin=admin,
+            otp=otp,
+            otp_exp=otp_exp,
         )
     )
-    token = create_verification_token(user.email)
-    await send_verification_email(user.email, token)
+    await send_verification_email(user.email, otp)
 
 
 def get_token(user) -> schemas.Token:
@@ -152,20 +148,16 @@ def get_token(user) -> schemas.Token:
     )
 
 
-@router.get("/verify/", status_code=201, response_model=schemas.Token)
-async def verify_email(token: str):
+@router.post("/verify-otp/", status_code=201, response_model=schemas.Token)
+async def verify_email_otp(data: schemas.OTPVerify):
     """
-    This function is for verifying email with verification token
+    Verify email with OTP
 
     Returns: Access token when verified
     """
-    payload = verify_token(token)
-    email = payload.get("sub")
-    if not email:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
-    user = await db.verify_user(email)
+    user = await db.verify_user_otp(data.email.lower(), data.otp)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=400, detail="Invalid or expired OTP")
     return get_token(user)
 
 
@@ -196,7 +188,7 @@ def login_status_check(token: str = Depends(oauth2_scheme)):
         if not payload or payload.get("sub") is None:
             return schemas.LoginStatus(status=False)
         return schemas.LoginStatus(status=True)
-    except:
+    except Exception:
         return schemas.LoginStatus(status=False)
 
 

@@ -1,12 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import Cookies from "js-cookie";
+import api from "@/app/helpers/api";
 import { getLoginStatus } from "@/app/helpers/auth";
+import { showModal } from "@/app/helpers/modal-manager";
 
 export default function Pending() {
-  const [loginStatus, setLoginStatus] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [loginStatus, setLoginStatus] = useState(false);
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [verifying, setVerifying] = useState(false);
+
+  useEffect(() => {
+    const emailParam = searchParams.get("email");
+    if (emailParam) setEmail(decodeURIComponent(emailParam));
+    else location.href = "/";
+  }, []);
 
   useEffect(() => {
     const runCheck = async () => {
@@ -14,19 +28,51 @@ export default function Pending() {
       setLoginStatus(loggedIn);
     };
     runCheck();
-  }, []);
+  }, [router]);
 
-  useEffect(() => {
-    if (loginStatus) {
-      // Show success message for 3 seconds then close/redirect
-      setTimeout(() => {
-        router.push("/");
-      }, 3000);
+  const verifyOtp = async () => {
+    if (!otp) {
+      showModal({
+        title: "Missing Info",
+        message: "Please enter the OTP.",
+        type: "error",
+        onConfirm: () => {},
+      });
+      return;
     }
-  }, [loginStatus, router]);
+    setVerifying(true);
+    try {
+      const response = await api.post("/auth/verify-otp/", { email, otp });
+      if (response.status === 201 || response.status === 200) {
+        // Store token and redirect
+        const token = response.data.access_token;
+        if (token) {
+          Cookies.set("token", token);
+          Cookies.set("admin", response.data.admin);
+        }
+        showModal({
+          title: "Verified",
+          message: "Your account has been verified successfully.",
+          type: "success",
+          onConfirm: () => {},
+        });
+        setLoginStatus(true);
+        location.href = "/"; // to reload
+      }
+    } catch (error) {
+      showModal({
+        title: "Verification Failed",
+        message: "Invalid or expired OTP. Please try again.",
+        type: "error",
+        onConfirm: () => {},
+      });
+    } finally {
+      setVerifying(false);
+    }
+  };
 
   return (
-    <div className="py-[25vh] text-2xl text-center animate-fadeIn">
+    <div className="py-[10vh] text-2xl text-center animate-fadeIn">
       {loginStatus ? (
         <>
           <div className="text-6xl mb-4">✅</div>
@@ -38,10 +84,29 @@ export default function Pending() {
       ) : (
         <>
           Account verification is pending. <br />
-          Please verify your email by clicking the link in the email we sent.
+          Please verify your email using the OTP we sent.
           <br />
           <br />
-          <span className="loading loading-bars loading-xl"></span>
+          <div className="max-w-md mx-auto mt-6 space-y-4 text-left">
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onKeyDown={(e) => e.key === "Enter" && verifyOtp()}
+              onChange={(e) => setOtp(e.target.value)}
+              className="input input-bordered w-full"
+            />
+            <button
+              className="btn btn-primary w-full"
+              onClick={verifyOtp}
+              disabled={verifying}
+            >
+              {verifying ? "Verifying..." : "Verify OTP"}
+            </button>
+            <div className="text-center text-sm text-base-content/70">
+              Check your inbox for the 6-digit code.
+            </div>
+          </div>
         </>
       )}
     </div>

@@ -37,7 +37,7 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
     try {
       const response = await api.post("/auth/register/", data);
       if (response.status === 200) {
-        router.push("/pending");
+        router.push("/pending?email=" + encodeURIComponent(email));
       }
     } catch (error: unknown) {
       handleError(error);

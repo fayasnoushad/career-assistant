@@ -4,6 +4,7 @@ from bson.objectid import ObjectId
 from typing import List, Optional
 from pymongo import AsyncMongoClient
 from .configs import DB_NAME, DB_URL
+from datetime import datetime, timezone
 
 
 class Database:
@@ -40,10 +41,22 @@ class Database:
             user.pop("_id", None)
         return user
 
-    async def verify_user(self, email: str):
+    async def verify_user_otp(self, email: str, otp: str):
         user = await self.pending_users.find_one({"email": email})
-        if user:
-            del user["_id"]
+        if not user:
+            return None
+        if user.get("otp") != otp:
+            return None
+        if user.get("otp_exp"):
+            otp_exp = user["otp_exp"]
+            # Ensure otp_exp is timezone-aware (assume UTC if naive)
+            if otp_exp.tzinfo is None or otp_exp.tzinfo.utcoffset(otp_exp) is None:
+                otp_exp = otp_exp.replace(tzinfo=timezone.utc)
+            if otp_exp < datetime.now(timezone.utc):
+                return None
+        user.pop("_id", None)
+        user.pop("otp", None)
+        user.pop("otp_exp", None)
         user_id = await self.add_user(user)
         await self.pending_users.delete_many({"email": email})
         return await self.get_user(user_id)

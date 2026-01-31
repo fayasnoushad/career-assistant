@@ -22,13 +22,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 # email verification
 EMAIL_USER = os.environ.get("EMAIL_USER")
 EMAIL_PASS = os.environ.get("EMAIL_PASS")
-EMAIL_TOKEN_EXPIRE_HOURS = 24  # hours
+OTP_EXPIRE_MINUTES = int(os.environ.get("OTP_EXPIRE_MINUTES", 10))
 
 # admins
 SUPER_ADMINS = {admin for admin in os.environ.get("SUPER_ADMINS", "").split(" ")}
 
 # developer mode
 DEV_MODE = bool(os.environ.get("DEV_MODE", False))
-
-# frontend domain
-DOMAIN = os.environ.get("DOMAIN", "localhost:3000")
