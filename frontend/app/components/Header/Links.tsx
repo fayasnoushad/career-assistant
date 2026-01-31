@@ -3,9 +3,11 @@ import Link from "next/link";
 export default function Links() {
   const links = [
     { href: "/careers/", label: "Jobs or Courses", icon: "🎯" },
+    { href: "/resume", label: "Resume Analysis", icon: "📄" },
     { href: "/saved-jobs", label: "Saved Jobs", icon: "💼" },
     { href: "/saved-courses", label: "Saved Courses", icon: "📚" },
     { href: "/saved-roadmaps", label: "Saved Roadmaps", icon: "🗺️" },
+    { href: "/saved-resumes", label: "Saved Resumes", icon: "📋" },
     { href: "/settings", label: "Settings", icon: "⚙️" },
     { href: "/logout", label: "Logout", icon: "🚪" },
   ];

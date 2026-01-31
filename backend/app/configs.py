@@ -4,9 +4,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# gemini api key
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
-
 # database (mongodb)
 DB_URL = os.environ.get("DB_URL")
 DB_NAME = os.environ.get("DB_NAME", "career-assistant")

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional, List, Tuple
+from typing import Optional, List
 
 
 class UserCreate(BaseModel):
@@ -108,3 +108,37 @@ class SavedRoadmap(Roadmap):
 
 class SavedRoadmaps(BaseModel):
     roadmaps: List[SavedRoadmap]
+
+
+class SkillGap(BaseModel):
+    skill: str
+    importance: str
+    reason: str
+
+
+class ResumeFeedback(BaseModel):
+    overall_score: int
+    strengths: List[str]
+    weaknesses: List[str]
+    skill_gaps: List[SkillGap]
+    improvement_suggestions: List[str]
+    recommended_courses: List[str]
+    formatting_tips: List[str]
+
+
+class ResumeAnalysisRequest(BaseModel):
+    target_role: Optional[str] = None
+    experience_level: Optional[str] = None
+
+
+class ResumeAnalysis(BaseModel):
+    id: str
+    filename: str
+    upload_date: str
+    target_role: Optional[str] = None
+    experience_level: Optional[str] = None
+    feedback: ResumeFeedback
+
+
+class ResumeAnalysisList(BaseModel):
+    analyses: List[ResumeAnalysis]

@@ -18,6 +18,7 @@ class Database:
         self.saved_courses = self.db["saved_courses"]
         self.saved_roadmaps = self.db["saved_roadmaps"]
         self.learned_courses = self.db["learned_courses"]
+        self.resumes = self.db["resumes"]
         self.cache = {}
 
     async def add_user(self, user):
@@ -81,7 +82,7 @@ class Database:
                 job.pop("_id", None)
                 job["id"] = inserted_job_id
                 job_list.append(schemas.Job(**job))
-            except:
+            except Exception:
                 pass
         return job_list
 
@@ -206,6 +207,41 @@ class Database:
             {"user_id": ObjectId(user_id)},
             {"$set": {"courses": learned_courses}},
             upsert=True,
+        )
+
+    async def save_resume_analysis(self, user_id: str, resume_data: dict) -> str:
+        """Save a resume analysis to the database"""
+        resume_data["user_id"] = ObjectId(user_id)
+        result = await self.resumes.insert_one(resume_data)
+        return str(result.inserted_id)
+
+    async def get_resume_analyses(self, user_id: str) -> List[dict]:
+        """Get all resume analyses for a user"""
+        analyses = []
+        async for resume in self.resumes.find({"user_id": ObjectId(user_id)}).sort(
+            "_id", -1
+        ):
+            resume["id"] = str(resume["_id"])
+            del resume["_id"]
+            del resume["user_id"]
+            analyses.append(resume)
+        return analyses
+
+    async def get_resume_analysis(self, user_id: str, resume_id: str) -> Optional[dict]:
+        """Get a specific resume analysis"""
+        resume = await self.resumes.find_one(
+            {"_id": ObjectId(resume_id), "user_id": ObjectId(user_id)}
+        )
+        if resume:
+            resume["id"] = str(resume["_id"])
+            del resume["_id"]
+            del resume["user_id"]
+        return resume
+
+    async def delete_resume_analysis(self, user_id: str, resume_id: str):
+        """Delete a resume analysis"""
+        await self.resumes.delete_one(
+            {"_id": ObjectId(resume_id), "user_id": ObjectId(user_id)}
         )
 
 
