@@ -5,12 +5,14 @@ Handles resume upload, analysis, and retrieval endpoints
 
 from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi.responses import StreamingResponse
 from typing import Optional
 from .. import schemas
 from ..database import db
 from ..routers.auth import get_user_id
 from ..helpers.resume_parser import parse_resume
 from ..helpers.resume_analyzer import analyze_resume
+from ..helpers.resume_export import generate_pdf, generate_docx
 
 router = APIRouter(prefix="/resumes", tags=["resumes"])
 
@@ -162,4 +164,52 @@ async def delete_resume_analysis(
     except Exception as e:
         raise HTTPException(
             status_code=500, detail=f"Error deleting resume analysis: {str(e)}"
+        )
+
+
+@router.get("/{resume_id}/export")
+async def export_resume_analysis(
+    resume_id: str,
+    format: str = "pdf",
+    user_id: str = Depends(get_user_id),
+):
+    """
+    Export a resume analysis as PDF or DOCX
+
+    - **resume_id**: ID of the resume analysis
+    - **format**: Export format (pdf or docx)
+    """
+    try:
+        # Validate format
+        if format not in ["pdf", "docx"]:
+            raise HTTPException(
+                status_code=400, detail="Invalid format. Must be 'pdf' or 'docx'"
+            )
+
+        # Get analysis
+        analysis = await db.get_resume_analysis(user_id, resume_id)
+        if not analysis:
+            raise HTTPException(status_code=404, detail="Resume analysis not found")
+
+        # Generate export
+        if format == "pdf":
+            file_buffer = generate_pdf(analysis)
+            media_type = "application/pdf"
+            filename = f"resume_analysis_{analysis['filename'].rsplit('.', 1)[0]}.pdf"
+        else:  # docx
+            file_buffer = generate_docx(analysis)
+            media_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            filename = f"resume_analysis_{analysis['filename'].rsplit('.', 1)[0]}.docx"
+
+        return StreamingResponse(
+            file_buffer,
+            media_type=media_type,
+            headers={"Content-Disposition": f"attachment; filename={filename}"},
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Error exporting resume analysis: {str(e)}"
         )

@@ -75,13 +75,16 @@ export default function ResumeUploadForm({ onUpload }: ResumeUploadFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6 bg-base-200 rounded-lg p-6 hover:shadow-lg transition-shadow w-full max-w-4xl"
+    >
       {/* File Upload Area */}
       <div
         className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
           dragActive
-            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
-            : "border-gray-300 dark:border-gray-600"
+            ? "border-primary bg-primary/20 dark:bg-primary/30"
+            : "border-base-300"
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -112,7 +115,7 @@ export default function ResumeUploadForm({ onUpload }: ResumeUploadFormProps) {
                   e.preventDefault();
                   setFile(null);
                 }}
-                className="mt-4 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                className="mt-4 text-sm text-primary hover:underline"
               >
                 Choose a different file
               </button>
@@ -121,10 +124,10 @@ export default function ResumeUploadForm({ onUpload }: ResumeUploadFormProps) {
             <>
               <div className="text-6xl mb-4">⬆️</div>
               <p className="text-lg font-semibold mb-2">Upload your resume</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-base-content/70">
                 Drag and drop your file here, or click to browse
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+              <p className="text-xs text-base-content/50 mt-2">
                 Supported formats: PDF, DOC, DOCX
               </p>
             </>
@@ -147,7 +150,7 @@ export default function ResumeUploadForm({ onUpload }: ResumeUploadFormProps) {
             value={targetRole}
             onChange={(e) => setTargetRole(e.target.value)}
             placeholder="e.g., Software Engineer, Data Analyst"
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800"
+            className="w-full px-4 py-2 border border-base-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-base-100"
           />
         </div>
 
@@ -162,7 +165,7 @@ export default function ResumeUploadForm({ onUpload }: ResumeUploadFormProps) {
             id="experience-level"
             value={experienceLevel}
             onChange={(e) => setExperienceLevel(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800"
+            className="w-full px-4 py-2 border border-base-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-base-100"
           >
             <option value="">Select level</option>
             <option value="Entry-level">Entry-level</option>
@@ -178,10 +181,8 @@ export default function ResumeUploadForm({ onUpload }: ResumeUploadFormProps) {
       <button
         type="submit"
         disabled={!file}
-        className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors ${
-          file
-            ? "bg-blue-600 hover:bg-blue-700 text-white"
-            : "bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+        className={`btn w-full py-3 px-6 rounded-lg text-base-content font-semibold ${
+          file ? "bg-success" : "btn-disabled"
         }`}
       >
         Analyze Resume
