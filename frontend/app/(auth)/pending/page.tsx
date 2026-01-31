@@ -1,30 +1,19 @@
 "use client";
 
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getLoginStatus } from "@/app/helpers/auth";
 
 export default function Pending() {
   const [loginStatus, setLoginStatus] = useState(false);
   const router = useRouter();
 
-  const check = async () => {
-    const token = Cookies.get("token");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        if (decoded.exp && decoded.exp * 1000 > Date.now()) {
-          setLoginStatus(true);
-          return;
-        } else Cookies.remove("token");
-      } catch {}
-      setLoginStatus(false);
-    }
-  };
-
   useEffect(() => {
-    check();
+    const runCheck = async () => {
+      const loggedIn = await getLoginStatus();
+      setLoginStatus(loggedIn);
+    };
+    runCheck();
   }, []);
 
   useEffect(() => {

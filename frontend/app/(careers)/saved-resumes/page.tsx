@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import api from "@/app/helpers/api";
 import Loading from "@/app/components/Loading/Loading";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import { API_URL } from "@/app/config";
+import Link from "next/link";
+import { getLoginStatus } from "@/app/helpers/auth";
 import { showModal } from "@/app/helpers/modal-manager";
 
 interface SkillGap {
@@ -35,10 +35,18 @@ interface ResumeAnalysis {
 export default function SavedResumes() {
   const [analyses, setAnalyses] = useState<ResumeAnalysis[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loginStatus, setLoginStatus] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const fetchAnalyses = async () => {
+      setLoading(true);
+      const loggedIn = await getLoginStatus();
+      setLoginStatus(loggedIn);
+      if (!loggedIn) {
+        setLoading(false);
+        return;
+      }
       try {
         const response = await api.get("/resumes/");
         setAnalyses(response.data.analyses);
@@ -56,20 +64,26 @@ export default function SavedResumes() {
     fetchAnalyses();
   }, []);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this analysis?")) return;
-
-    try {
-      await api.delete(`/resumes/${id}`);
-      setAnalyses(analyses.filter((a) => a.id !== id));
-    } catch (error) {
-      showModal({
-        title: "Error",
-        message: "Failed to delete analysis",
-        type: "error",
-        onConfirm: () => {},
-      });
-    }
+  const handleDelete = (id: string) => {
+    showModal({
+      title: "Confirm Deletion",
+      message: "Are you sure you want to delete this analysis?",
+      type: "confirm",
+      onConfirm: async () => {
+        try {
+          await api.delete(`/resumes/${id}`);
+          setAnalyses(analyses.filter((a) => a.id !== id));
+        } catch (error) {
+          showModal({
+            title: "Error",
+            message: "Failed to delete analysis",
+            type: "error",
+            onConfirm: () => {},
+          });
+        }
+      },
+      onCancel: () => {},
+    });
   };
 
   const handleExport = async (
@@ -78,27 +92,11 @@ export default function SavedResumes() {
     format: "pdf" | "docx",
   ) => {
     try {
-      const token = Cookies.get("token");
-      const response = await fetch(
-        `${API_URL}/resumes/${id}/export?format=${format}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      const response = await api.get(`/resumes/${id}/export?format=${format}`, {
+        responseType: "blob",
+      });
 
-      if (!response.ok) {
-        showModal({
-          title: "Export Failed",
-          message: "Failed to export analysis. Please try again.",
-          type: "error",
-          onConfirm: () => {},
-        });
-        return;
-      }
-
-      const blob = await response.blob();
+      const blob = response.data as Blob;
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -141,7 +139,21 @@ export default function SavedResumes() {
 
       {loading && <Loading />}
 
-      {!loading && analyses.length === 0 && (
+      {!loading && !loginStatus && (
+        <div className="text-center text-base-content/70">
+          <p className="mb-4">
+            Login to save roadmaps, courses, jobs, and resumes.
+          </p>
+          <Link
+            href="/login"
+            className="btn btn-md bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 rounded-full"
+          >
+            Login
+          </Link>
+        </div>
+      )}
+
+      {!loading && loginStatus && analyses.length === 0 && (
         <div className="text-center text-base-content/70">
           <p className="mb-4">No resume analyses saved yet!</p>
           <button
@@ -153,7 +165,7 @@ export default function SavedResumes() {
         </div>
       )}
 
-      {!loading && analyses.length > 0 && (
+      {!loading && loginStatus && analyses.length > 0 && (
         <div className="w-full max-w-4xl space-y-4">
           {analyses.map((analysis) => (
             <div

@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Cookies from "js-cookie";
-import { API_URL } from "@/app/config";
+import api from "@/app/helpers/api";
 import { showModal } from "@/app/helpers/modal-manager";
 import { CSSProperties } from "react";
 
@@ -43,9 +42,9 @@ export default function ResumeAnalysisDisplay({
   const { feedback } = analysis;
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600 dark:text-green-400";
-    if (score >= 60) return "text-yellow-600 dark:text-yellow-400";
-    return "text-red-600 dark:text-red-400";
+    if (score >= 80) return "text-success";
+    if (score >= 60) return "text-warning";
+    return "text-error";
   };
 
   const getImportanceBadge = (importance: string) => {
@@ -59,22 +58,13 @@ export default function ResumeAnalysisDisplay({
 
   const handleExport = async (format: "pdf" | "docx") => {
     try {
-      const token = Cookies.get("token");
-      const response = await fetch(
-        `${API_URL}/resumes/${analysis.id}/export?format=${format}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const response = await api.get(
+        `/resumes/${analysis.id}/export?format=${format}`,
+        { responseType: "blob" },
       );
 
-      if (!response.ok) {
-        throw new Error("Export failed");
-      }
-
       // Create blob and download
-      const blob = await response.blob();
+      const blob = response.data as Blob;
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -96,7 +86,7 @@ export default function ResumeAnalysisDisplay({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-base-300 rounded-lg shadow-md p-6">
+      <div className="bg-base-200 rounded-lg shadow-md p-6">
         <div className="flex justify-between items-start mb-4">
           <div>
             <h2 className="text-2xl font-bold mb-2">Analysis Results</h2>
@@ -150,7 +140,7 @@ export default function ResumeAnalysisDisplay({
       </div>
 
       {/* Strengths */}
-      <div className="bg-base-300 rounded-lg shadow-md p-6">
+      <div className="bg-base-200 rounded-lg shadow-md p-6">
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
           <span className="text-2xl">✅</span>
           Strengths
@@ -166,7 +156,7 @@ export default function ResumeAnalysisDisplay({
       </div>
 
       {/* Weaknesses */}
-      <div className="bg-base-300 rounded-lg shadow-md p-6">
+      <div className="bg-base-200 rounded-lg shadow-md p-6">
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
           <span className="text-2xl">❌</span>
           Areas for Improvement
@@ -182,7 +172,7 @@ export default function ResumeAnalysisDisplay({
       </div>
 
       {/* Skill Gaps */}
-      <div className="bg-base-300 rounded-lg shadow-md p-6">
+      <div className="bg-base-200 rounded-lg shadow-md p-6">
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
           <span className="text-2xl">⚠️</span>
           Skill Gaps
@@ -210,7 +200,7 @@ export default function ResumeAnalysisDisplay({
       </div>
 
       {/* Improvement Suggestions */}
-      <div className="bg-base-300 rounded-lg shadow-md p-6">
+      <div className="bg-base-200 rounded-lg shadow-md p-6">
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
           <span className="text-2xl">💡</span>
           Improvement Suggestions
@@ -228,7 +218,7 @@ export default function ResumeAnalysisDisplay({
       </div>
 
       {/* Recommended Courses */}
-      <div className="bg-base-300 rounded-lg shadow-md p-6">
+      <div className="bg-base-200 rounded-lg shadow-md p-6">
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
           <span className="text-2xl">📚</span>
           Recommended Courses
@@ -257,7 +247,7 @@ export default function ResumeAnalysisDisplay({
       </div>
 
       {/* Formatting Tips */}
-      <div className="bg-base-300 rounded-lg shadow-md p-6">
+      <div className="bg-base-200 rounded-lg shadow-md p-6">
         <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
           <span className="text-2xl">📝</span>
           Formatting Tips

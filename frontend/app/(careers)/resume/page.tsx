@@ -1,10 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 import api from "@/app/helpers/api";
 import Loading from "@/app/components/Loading/Loading";
 import ResumeUploadForm from "./components/ResumeUploadForm";
 import ResumeAnalysisDisplay from "./components/ResumeAnalysisDisplay";
-import Cookies from "js-cookie";
+import { getLoginStatus } from "@/app/helpers/auth";
 
 interface SkillGap {
   skill: string;
@@ -35,6 +36,15 @@ export default function ResumePage() {
   const [analysis, setAnalysis] = useState<ResumeAnalysis | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loginStatus, setLoginStatus] = useState(false);
+
+  useEffect(() => {
+    const runCheck = async () => {
+      const loggedIn = await getLoginStatus();
+      setLoginStatus(loggedIn);
+    };
+    runCheck();
+  }, []);
 
   const handleUpload = async (
     file: File,
@@ -49,15 +59,7 @@ export default function ResumePage() {
       formData.append("file", file);
       if (targetRole) formData.append("target_role", targetRole);
       if (experienceLevel) formData.append("experience_level", experienceLevel);
-
-      const token = Cookies.get("token");
-      const response = await api.post("/resumes/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
+      const response = await api.post("/resumes/upload", formData);
       setAnalysis(response.data);
     } catch (err: any) {
       setError(
@@ -103,7 +105,23 @@ export default function ResumePage() {
           </div>
         )}
 
-        {!loading && !analysis && <ResumeUploadForm onUpload={handleUpload} />}
+        {!loading && !loginStatus && !analysis && (
+          <div className="text-center text-base-content/70">
+            <p className="mb-4">
+              Login to save roadmaps, courses, jobs, and resumes.
+            </p>
+            <Link
+              href="/login"
+              className="btn btn-md bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 rounded-full"
+            >
+              Login
+            </Link>
+          </div>
+        )}
+
+        {!loading && loginStatus && !analysis && (
+          <ResumeUploadForm onUpload={handleUpload} />
+        )}
 
         {!loading && analysis && (
           <ResumeAnalysisDisplay analysis={analysis} onReset={handleReset} />

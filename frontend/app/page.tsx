@@ -1,34 +1,23 @@
 "use client";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { getLoginStatus } from "@/app/helpers/auth";
 
 export default function Home() {
   const [loginStatus, setLoginStatus] = useState(false);
 
-  const check = async () => {
-    const token = Cookies.get("token");
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        if (decoded.exp && decoded.exp * 1000 > Date.now()) {
-          setLoginStatus(true);
-          return;
-        } else Cookies.remove("token");
-      } catch {}
-      setLoginStatus(false);
-    }
-  };
-
   useEffect(() => {
-    check();
+    const runCheck = async () => {
+      const loggedIn = await getLoginStatus();
+      setLoginStatus(loggedIn);
+    };
+    runCheck();
   }, []);
 
   return (
     <main className="flex flex-col justify-center items-center text-center h-full mx-5 animate-fadeIn">
       <div className="max-w-4xl space-y-8">
-        <h1 className="text-5xl md:text-6xl font-bold bg-linear-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent animate-slideIn">
+        <h1 className="text-5xl py-5 md:text-6xl font-bold bg-linear-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent animate-slideIn">
           Welcome to Career Assistant
         </h1>
         <p className="text-xl md:text-2xl text-base-content/80 font-light max-w-2xl mx-auto">
@@ -56,22 +45,7 @@ export default function Home() {
             </svg>
             Find Jobs & Courses
           </Link>
-          {loginStatus ? (
-            <>
-              <Link
-                className="btn btn-lg btn-outline rounded-full hover:bg-purple-500/10 hover:border-purple-500 transition-all duration-300"
-                href="/saved-jobs"
-              >
-                View Saved Jobs
-              </Link>
-              <Link
-                className="btn btn-lg btn-outline rounded-full hover:bg-blue-500/10 hover:border-blue-500 transition-all duration-300"
-                href="/saved-roadmaps"
-              >
-                View Saved Roadmaps
-              </Link>
-            </>
-          ) : (
+          {!loginStatus && (
             <Link
               className="btn btn-lg btn-outline rounded-full hover:bg-blue-500/10 hover:border-blue-500 transition-all duration-300"
               href="/login"
@@ -80,7 +54,7 @@ export default function Home() {
             </Link>
           )}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 text-left">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-5 text-left">
           <div className="p-6 rounded-2xl bg-linear-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-purple-500/20 hover:border-purple-500/40 transition-all duration-300">
             <div className="text-3xl mb-3">🎯</div>
             <h3 className="font-bold text-lg mb-2">AI-Powered Matching</h3>
@@ -104,6 +78,29 @@ export default function Home() {
             </p>
           </div>
         </div>
+        {loginStatus && (
+          <div className="my-5 p-6 md:p-8 rounded-2xl bg-linear-to-br from-indigo-500/10 to-blue-500/10 backdrop-blur-sm border border-indigo-500/20 text-left">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div>
+                <div className="text-3xl mb-2">📄</div>
+                <h3 className="font-bold text-xl mb-2">
+                  Resume Analysis & Feedback
+                </h3>
+                <p className="text-sm text-base-content/70 max-w-2xl">
+                  Upload your resume to get AI-powered feedback, skill-gap
+                  insights, and actionable improvements to boost your interview
+                  chances.
+                </p>
+              </div>
+              <Link
+                href="/resume"
+                className="btn btn-md bg-linear-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white border-0 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                Analyze My Resume
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
