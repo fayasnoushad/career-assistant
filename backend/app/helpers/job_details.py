@@ -8,7 +8,7 @@ async def get_job_details_by_ai(job_name: str, api_key: str) -> schemas.JobDetai
     client = genai.Client(api_key=api_key)
     response = await asyncio.to_thread(
         client.models.generate_content,
-        model="gemini-2.5-flash-lite",
+        model="gemini-2.5-flash",
         contents=query,
         config={
             "response_mime_type": "application/json",

@@ -16,13 +16,13 @@ def get_course_details(card: WebElement):
         sm_text_elements = card.find_elements(By.CLASS_NAME, "text-sm")
         try:
             duration = sm_text_elements[1].find_element(By.TAG_NAME, "span").text
-        except:
+        except Exception:
             duration = None
         try:
             level = sm_text_elements[2].find_element(By.TAG_NAME, "span").text
-        except:
+        except Exception:
             level = None
-    except:
+    except Exception:
         duration = level = None
     link = card.find_element(By.TAG_NAME, "a").get_attribute("href")
     course_data = dict(

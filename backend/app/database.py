@@ -80,10 +80,10 @@ class Database:
         return user.get("gemini_api") if user else None
 
     async def add_job_details(self, job_details: schemas.JobDetails):
-        await self.job_details.insert_one(job_details)
+        await self.job_details.insert_one(job_details.model_dump())
 
     async def get_job_details(self, job_name) -> schemas.JobDetails | None:
-        job_details = await self.job_details.find_one({"name": job_name})
+        job_details = await self.job_details.find_one({"job_name": job_name})
         return job_details if job_details else None
 
     async def add_job(self, job: dict) -> str:

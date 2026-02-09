@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from ..helpers.job_salary_predict import get_predicted_salary
 from ..helpers.jobs_find import get_jobs, get_jobs_by_prompt
 from ..helpers.job_details import get_job_details_by_ai
+from ..helpers.scrape_helper.youtube_video_scrape import scrape_youtube_videos
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
@@ -66,12 +67,15 @@ async def get_job_details_using_name(
     if not api_key:
         raise HTTPException(status_code=400, detail="Gemini API Key not found")
     job_details = await get_job_details_by_ai(details.name, api_key)
-    resources = []
+    # Scrape YouTube videos related to the job and add them to the resources
+    resources = await scrape_youtube_videos(details.name)
     updated_job_details = schemas.JobDetails(
+        job_name=job_details.job_name,
         description=job_details.description,
         responsibilities=job_details.responsibilities,
         minimum_skills_required=job_details.minimum_skills_required,
         career_scope=job_details.career_scope,
         resources=resources,
     )
+    await db.add_job_details(updated_job_details)
     return updated_job_details

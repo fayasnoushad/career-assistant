@@ -85,6 +85,7 @@ class Resource(BaseModel):
 
 
 class JobDetailsByAI(BaseModel):
+    job_name: str
     description: str
     responsibilities: List[str]
     minimum_skills_required: List[str]
@@ -92,7 +93,7 @@ class JobDetailsByAI(BaseModel):
 
 
 class JobDetails(JobDetailsByAI):
-    resources: List[Resource]
+    resources: List[str]
 
 
 class Salary(BaseModel):

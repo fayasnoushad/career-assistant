@@ -1,31 +1,6 @@
-import api from "@/app/helpers/api";
-import { useEffect, useState } from "react";
+import { JobDetails } from "./types";
 
-type JobDetails = {
-  description: string;
-  responsibilities: string[];
-  minimum_skills_required: string[];
-  career_scope: string;
-  resources: { title: string; url: string }[];
-};
-
-export default function AboutJob({ jobName }: { jobName: string }) {
-  const [jobDetails, setJobDetails] = useState<JobDetails>({
-    description: "",
-    responsibilities: [],
-    minimum_skills_required: [],
-    career_scope: "",
-    resources: [],
-  });
-
-  useEffect(() => {
-    const fetchJobDetails = async () => {
-      const response = await api.post("/jobs/details/", { name: jobName });
-      setJobDetails(response.data);
-    };
-    fetchJobDetails();
-  }, []);
-
+export default function AboutJob({ jobDetails }: { jobDetails: JobDetails }) {
   return (
     <div className="flex flex-col gap-4 w-1/2 my-5">
       <div className="collapse bg-base-200 border-base-200 border shadow-xl">
@@ -52,7 +27,10 @@ export default function AboutJob({ jobName }: { jobName: string }) {
         <div className="collapse-content">
           <div className="flex flex-wrap gap-2">
             {jobDetails.minimum_skills_required.map((skill) => (
-              <span key={skill} className="badge badge-primary">
+              <span
+                key={skill}
+                className="bg-info text-info-content py-1 px-2 rounded-lg text-sm"
+              >
                 {skill}
               </span>
             ))}
@@ -74,14 +52,17 @@ export default function AboutJob({ jobName }: { jobName: string }) {
         <input type="checkbox" />
         <div className="collapse-title font-semibold">Learning Resources</div>
         <div className="collapse-content">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {jobDetails.resources.map((resource) => (
+          <div className="flex flex-row flex-wrap items-center justify-center gap-4">
+            {jobDetails.resources.map((resource_url, index) => (
               <iframe
-                key={resource.url}
-                width="100%"
-                height="315"
-                src={resource.url}
-              />
+                key={index}
+                className="w-[45%] aspect-video"
+                src={resource_url}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+              ></iframe>
             ))}
           </div>
         </div>
