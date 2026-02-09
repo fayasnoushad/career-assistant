@@ -28,21 +28,16 @@ export default function Jobs({
   useEffect(() => {
     // used to make effect effect StrictMode-safe.
     // It prevents api calling twice in development mode.
-    const abortController = new AbortController();
     const fetchJobDetails = async () => {
       try {
         const response = await api.post("/jobs/details/", { name: jobName });
-        if (!abortController.signal.aborted) {
-          setJobDetails(response.data);
-        }
+        setJobDetails(response.data);
       } catch (error) {
-        if (error instanceof Error && error.message !== "canceled") {
+        if (error instanceof Error && error.message !== "canceled")
           console.error("Failed to fetch job details:", error);
-        }
       }
     };
     if (jobName.length > 0) fetchJobDetails();
-    return () => abortController.abort();
   }, [jobName]);
 
   return (
