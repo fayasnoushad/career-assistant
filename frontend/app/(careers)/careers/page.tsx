@@ -2,7 +2,7 @@
 import { Suspense, useState } from "react";
 import Form from "../components/Form/Form";
 import Cards from "../components/Cards/Cards";
-import Loading from "../../components/Loading/Loading";
+import Loading from "../../components/Loading";
 import Roadmap from "../components/Roadmap/Roadmap";
 import JobList from "../components/JobList/JobList";
 import Jobs from "../components/Jobs/Jobs";

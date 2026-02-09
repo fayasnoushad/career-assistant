@@ -6,7 +6,7 @@ import api from "@/app/helpers/api";
 import { useRouter } from "next/navigation";
 import handleError from "../helpers/handle-error";
 import modalAlert from "../helpers/modal-alert";
-import Loading from "@/app/components/Loading/Loading";
+import Loading from "@/app/components/Loading";
 
 interface AuthFormProps {
   registerStatus: boolean;

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import api from "../../helpers/api";
-import Loading from "../../components/Loading/Loading";
+import Loading from "../../components/Loading";
 
 interface DashboardData {
   career_goal: string | null;

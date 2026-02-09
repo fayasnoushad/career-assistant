@@ -2,7 +2,7 @@
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import React, { Suspense, useEffect } from "react";
-import Loading from "../components/Loading/Loading";
+import Loading from "../components/Loading";
 
 export default function AuthLayout({
   children,

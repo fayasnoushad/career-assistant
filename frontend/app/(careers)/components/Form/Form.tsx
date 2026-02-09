@@ -5,8 +5,8 @@ import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import api from "@/app/helpers/api";
 import FormDialog from "./FormDialog";
-import PromptForm from "./PromptForm/PromptForm";
-import SelectForm from "./SelectForm/SelectForm";
+import PromptForm from "./PromptForm";
+import SelectForm from "./SelectForm";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 

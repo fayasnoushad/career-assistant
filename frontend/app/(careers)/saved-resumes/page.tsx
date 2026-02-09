@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import api from "@/app/helpers/api";
-import Loading from "@/app/components/Loading/Loading";
+import Loading from "@/app/components/Loading";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { getLoginStatus } from "@/app/helpers/auth";

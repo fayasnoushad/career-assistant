@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import api from "@/app/helpers/api";
-import Loading from "@/app/components/Loading/Loading";
+import Loading from "@/app/components/Loading";
 import ResumeUploadForm from "./components/ResumeUploadForm";
 import ResumeAnalysisDisplay from "./components/ResumeAnalysisDisplay";
 import { getLoginStatus } from "@/app/helpers/auth";

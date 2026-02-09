@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getLoginStatus } from "@/app/helpers/auth";
 import Cards from "../components/Cards/Cards";
-import Loading from "@/app/components/Loading/Loading";
+import Loading from "@/app/components/Loading";
 import api from "@/app/helpers/api";
 
 export default function SavedJobs() {

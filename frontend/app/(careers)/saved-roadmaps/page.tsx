@@ -3,8 +3,8 @@ import api from "@/app/helpers/api";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getLoginStatus } from "@/app/helpers/auth";
-import Roadmap from "./components/Roadmap/Roadmap";
-import Loading from "@/app/components/Loading/Loading";
+import Roadmap from "./components/Roadmap";
+import Loading from "@/app/components/Loading";
 import { showModal } from "@/app/helpers/modal-manager";
 
 type Roadmap = {
