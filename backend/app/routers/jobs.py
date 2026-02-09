@@ -4,6 +4,7 @@ from .auth import get_user_id
 from fastapi import APIRouter, Depends, HTTPException
 from ..helpers.job_salary_predict import get_predicted_salary
 from ..helpers.jobs_find import get_jobs, get_jobs_by_prompt
+from ..helpers.job_details import get_job_details_by_ai
 
 router = APIRouter(prefix="/jobs", tags=["jobs"])
 
@@ -52,3 +53,25 @@ async def predict_salary(details: schemas.Id, user_id: str = Depends(get_user_id
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
     return await get_predicted_salary(schemas.Job(**job), api_key)
+
+
+@router.post("/details/", response_model=schemas.JobDetails)
+async def get_job_details_using_name(
+    details: schemas.Name, user_id: str = Depends(get_user_id)
+):
+    job_details = await db.get_job_details(details.name)
+    if job_details:
+        return job_details
+    api_key = await db.get_api(user_id)
+    if not api_key:
+        raise HTTPException(status_code=400, detail="Gemini API Key not found")
+    job_details = await get_job_details_by_ai(details.name, api_key)
+    resources = []
+    updated_job_details = schemas.JobDetails(
+        description=job_details.description,
+        responsibilities=job_details.responsibilities,
+        minimum_skills_required=job_details.minimum_skills_required,
+        career_scope=job_details.career_scope,
+        resources=resources,
+    )
+    return updated_job_details

@@ -79,6 +79,22 @@ class JobNames(BaseModel):
     jobs: List[str]
 
 
+class Resource(BaseModel):
+    title: str
+    url: str
+
+
+class JobDetailsByAI(BaseModel):
+    description: str
+    responsibilities: List[str]
+    minimum_skills_required: List[str]
+    career_scope: str
+
+
+class JobDetails(JobDetailsByAI):
+    resources: List[Resource]
+
+
 class Salary(BaseModel):
     salary: str
 

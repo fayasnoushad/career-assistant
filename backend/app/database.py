@@ -13,6 +13,7 @@ class Database:
         self.db = self.client[database_name]
         self.users = self.db["users"]
         self.pending_users = self.db["pending_users"]
+        self.job_details = self.db["job_details"]
         self.jobs = self.db["jobs"]
         self.courses = self.db["courses"]
         self.saved_jobs = self.db["saved_jobs"]
@@ -77,6 +78,13 @@ class Database:
     async def get_api(self, user_id: str) -> Optional[str]:
         user = await self.users.find_one({"_id": ObjectId(user_id)})
         return user.get("gemini_api") if user else None
+
+    async def add_job_details(self, job_details: schemas.JobDetails):
+        await self.job_details.insert_one(job_details)
+
+    async def get_job_details(self, job_name) -> schemas.JobDetails | None:
+        job_details = await self.job_details.find_one({"name": job_name})
+        return job_details if job_details else None
 
     async def add_job(self, job: dict) -> str:
         # check the same job stored in database or not

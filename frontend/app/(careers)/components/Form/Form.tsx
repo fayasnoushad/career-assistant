@@ -11,6 +11,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 type Props = {
+  setJobName: Dispatch<SetStateAction<string>>;
   setJobNames: Dispatch<SetStateAction<never[]>>;
   setRoadmaps: Dispatch<SetStateAction<never[]>>;
   setJobs: any;
@@ -20,6 +21,7 @@ type Props = {
 };
 
 export default function Form({
+  setJobName,
   setJobNames,
   setRoadmaps,
   setJobs,
@@ -46,6 +48,10 @@ export default function Form({
   useEffect(() => {
     const token = Cookies.get("token");
     if (token) setLogin(true);
+  }, []);
+
+  useEffect(() => {
+    setJobName("");
   }, []);
 
   const handleSubmit = async (
@@ -75,8 +81,10 @@ export default function Form({
       if (formType === "job") setJobNames(response.data.jobs);
       else setRoadmaps(response.data.roadmaps);
     } else {
-      if (formType === "job") setJobs(response.data.jobs);
-      else setCourses(response.data.courses);
+      if (formType === "job") {
+        setJobs(response.data.jobs);
+        setJobName(input);
+      } else setCourses(response.data.courses);
     }
     setLoading(false);
   };

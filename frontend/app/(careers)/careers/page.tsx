@@ -5,12 +5,14 @@ import Cards from "../components/Cards/Cards";
 import Loading from "../../components/Loading/Loading";
 import Roadmap from "../components/Roadmap/Roadmap";
 import JobList from "../components/JobList/JobList";
+import Jobs from "../components/Jobs/Jobs";
 
 export default function Careers() {
   const [jobs, setJobs] = useState([]);
   const [courses, setCourses] = useState([]);
   const [roadmaps, setRoadmaps] = useState([]);
   const [jobNames, setJobNames] = useState([]);
+  const [jobName, setJobName] = useState("");
   const [picked, setPicked] = useState(-1);
   const [loading, setLoading] = useState(false);
 
@@ -20,6 +22,7 @@ export default function Careers() {
         <Form
           setRoadmaps={setRoadmaps}
           setJobNames={setJobNames}
+          setJobName={setJobName}
           setJobs={setJobs}
           setCourses={setCourses}
           setLoading={setLoading}
@@ -57,7 +60,7 @@ export default function Careers() {
           index={picked}
         />
       )}
-      {jobNames && (
+      {jobNames.length > 0 && (
         <JobList
           names={jobNames}
           setJobs={setJobs as any}
@@ -65,7 +68,7 @@ export default function Careers() {
         />
       )}
       {loading && <Loading />}
-      {jobs && <Cards content={jobs} type={"job"} />}
+      {jobs.length > 1 && <Jobs jobs={jobs} jobName={jobName} />}
       {courses && <Cards content={courses} type={"course"} />}
     </main>
   );
