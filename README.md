@@ -17,6 +17,8 @@ Career Assistant is a web application designed to find courses, roadmaps, and jo
 - Analyze resumes with role and experience level, and provide feedback for improvement
 - Export analysed resume in PDF / DOCX format
 - Career progress dashboard with job data
+- Job role explanation feature that helps users understand job responsibilities, required skills, and real-world expectations
+- Career scope and resources section with embedded videos to guide users before applying for jobs
 
 ---
 

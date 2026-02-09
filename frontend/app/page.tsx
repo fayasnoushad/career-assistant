@@ -15,7 +15,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex flex-col justify-center items-center text-center h-full mx-5 animate-fadeIn">
+    <main className="flex flex-col justify-center items-center text-center h-full mx-5 animate-fadeIn py-10">
       <div className="max-w-4xl space-y-8">
         <h1 className="text-5xl py-5 md:text-6xl font-bold bg-linear-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent animate-slideIn">
           Welcome to Career Assistant

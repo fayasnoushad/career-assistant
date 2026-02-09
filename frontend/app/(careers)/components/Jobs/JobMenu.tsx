@@ -13,13 +13,13 @@ export default function JobMenu({
         className={`btn btn-secondary ${menuSelected === "jobList" ? "" : "btn-outline"} rounded`}
         onClick={() => setMenuSelected("jobList")}
       >
-        Job List
+        List of Jobs
       </button>
       <button
         className={`btn btn-secondary ${menuSelected === "about" ? "" : "btn-outline"} rounded`}
         onClick={() => setMenuSelected("about")}
       >
-        About the Job
+        More about the Job
       </button>
     </div>
   );

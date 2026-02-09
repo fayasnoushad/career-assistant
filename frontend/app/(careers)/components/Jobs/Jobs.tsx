@@ -17,6 +17,7 @@ export default function Jobs({
     "jobList",
   );
   const [jobDetails, setJobDetails] = useState<JobDetails>({
+    job_name: "",
     description: "",
     responsibilities: [],
     minimum_skills_required: [],

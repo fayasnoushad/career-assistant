@@ -83,12 +83,14 @@ class Database:
         await self.job_details.insert_one(job_details.model_dump())
 
     async def get_job_details(self, job_name) -> schemas.JobDetails | None:
-        job_details = await self.job_details.find_one({"job_name": job_name})
+        job_details = await self.job_details.find_one(
+            {"job_name": {"$regex": re.escape(job_name), "$options": "i"}}
+        )
         return job_details if job_details else None
 
     async def add_job(self, job: dict) -> str:
         # check the same job stored in database or not
-        same_job = await self.jobs.find_one({"link": job.get("name")})
+        same_job = await self.jobs.find_one({"link": job.get("link")})
         if same_job:
             same_job["id"] = str(same_job["_id"])
             same_job.pop("_id", None)

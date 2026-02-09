@@ -3,6 +3,12 @@ import { JobDetails } from "./types";
 export default function AboutJob({ jobDetails }: { jobDetails: JobDetails }) {
   return (
     <div className="flex flex-col gap-4 w-1/2 my-5">
+      <div className="bg-base-200 border-base-200 border shadow-xl">
+        <div className="text-2xl font-bold text-center p-5">
+          {jobDetails.job_name}
+        </div>
+      </div>
+
       <div className="collapse bg-base-200 border-base-200 border shadow-xl">
         <input type="checkbox" />
         <div className="collapse-title font-semibold">What is this job?</div>
