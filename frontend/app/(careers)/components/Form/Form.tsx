@@ -4,11 +4,11 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import { useSelector } from "react-redux";
 import api from "@/app/helpers/api";
-import FormDialog from "./FormDialog";
 import PromptForm from "./PromptForm";
 import SelectForm from "./SelectForm";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { showModal } from "@/app/helpers/modal-manager";
 
 type Props = {
   setJobName: Dispatch<SetStateAction<string>>;
@@ -61,8 +61,11 @@ export default function Form({
   ) => {
     if (event) event.preventDefault();
     if (!input) {
-      const modal = document.getElementById("form-dialog-modal");
-      if (modal) (modal as HTMLDialogElement).showModal();
+      showModal({
+        title: "Input Required",
+        message: "Please write something before clicking the button.",
+        type: "info",
+      });
       return;
     }
     setPicked(-1);
@@ -146,7 +149,6 @@ export default function Form({
           {promptForm ? "🔄 Normal Form" : "✨ AI Prompt"}
         </button>
       </form>
-      <FormDialog />
     </>
   );
 }
