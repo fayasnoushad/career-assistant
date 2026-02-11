@@ -91,10 +91,12 @@ export default function Form({
 
   return (
     <>
-      <form className="w-[90%] md:w-[80%] max-w-4xl p-8 md:p-12 flex flex-col items-center text-center my-10 bg-linear-to-br from-base-100 to-base-200 rounded-3xl shadow-2xl border border-base-300 backdrop-blur-sm animate-scaleIn">
-        <h3 className="text-2xl md:text-3xl font-bold bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-6">
-          Find jobs or courses for your career!
+      <form className="w-[90%] md:w-[80%] max-w-4xl p-8 md:p-12 flex flex-col items-center text-center my-10 bg-base-100 rounded-2xl shadow-lg border border-base-300 animate-scaleIn">
+        <h3 className="text-3xl md:text-4xl font-bold text-primary mb-2">
+          Find Jobs & Courses
         </h3>
+        <p>Discover jobs and courses tailored to your interests</p>
+        <div className="divider my-2"></div>
         {promptForm ? (
           hasApiKey ? (
             <PromptForm submitForm={handleSubmit} />
@@ -128,9 +130,10 @@ export default function Form({
         ) : (
           <SelectForm submitForm={handleSubmit} />
         )}
+        <div className="divider my-6"></div>
         <button
           type="button"
-          className="mt-6 mb-2 px-6 py-2 bg-linear-to-r from-purple-500/10 to-blue-500/10 hover:from-purple-500/20 hover:to-blue-500/20 text-purple-600 font-semibold rounded-full border border-purple-500/30 transition-all duration-300 transform hover:scale-105"
+          className="btn btn-ghost gap-2 text-sm font-semibold"
           onClick={() => {
             setPromptForm((prevPromptForm) => !prevPromptForm);
             setJobNames([]);
@@ -140,11 +143,7 @@ export default function Form({
             setLoading(false);
           }}
         >
-          <span className="flex items-center gap-2">
-            {promptForm
-              ? "🔄 Switch to Normal form"
-              : "✨ Switch to AI Prompt form"}
-          </span>
+          {promptForm ? "🔄 Normal Form" : "✨ AI Prompt"}
         </button>
       </form>
       <FormDialog />

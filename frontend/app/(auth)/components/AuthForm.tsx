@@ -77,8 +77,8 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
       {loading ? (
         <Loading />
       ) : (
-        <form className="border-2 border-base-300 bg-base-100 shadow-2xl rounded-3xl max-w-md p-8 md:p-10 animate-scaleIn">
-          <h2 className="text-center mb-8 text-3xl font-bold bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+        <form className="border-2 border-base-300 bg-base-100 shadow-2xl rounded-3xl max-w-md min-w-1/3 p-8 md:p-10 animate-scaleIn my-[10vh]">
+          <h2 className="text-center mb-5 md:mb-10 lg:mb-15 text-3xl font-bold bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
             {registerStatus ? "Create Account" : "Welcome Back"}
           </h2>
           {registerStatus && (
@@ -188,7 +188,7 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
               )}
             </div>
           )}
-          <div className="mt-8 py-2 text-center flex flex-col justify-center gap-4">
+          <div className="mt-8 py-2 md:py-5 lg:py-10 text-center flex flex-col justify-center gap-4">
             <button
               type="submit"
               className="btn btn-lg bg-linear-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full"

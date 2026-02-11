@@ -15,11 +15,10 @@ def get_web_driver():
     # Always headless in containers
     if running_in_container():
         options.binary_location = "/usr/bin/chromium"
-        if not DEV_MODE:
-            options.add_argument("--headless=new")
-
-    if running_in_container():
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
+
+    if not DEV_MODE:
+        options.add_argument("--headless=new")
 
     return webdriver.Chrome(options=options)

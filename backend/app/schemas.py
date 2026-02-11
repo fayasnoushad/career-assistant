@@ -63,7 +63,7 @@ class JobScrape(BaseModel):
     location: Optional[str] = None
     salary: Optional[int] = None
     link: str
-    description: str
+    description: Optional[str] = None
     time: str
 
 
@@ -77,11 +77,6 @@ class Jobs(BaseModel):
 
 class JobNames(BaseModel):
     jobs: List[str]
-
-
-class Resource(BaseModel):
-    title: str
-    url: str
 
 
 class JobDetailsByAI(BaseModel):

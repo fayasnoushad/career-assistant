@@ -20,7 +20,7 @@ def get_job_details(driver: webdriver.Chrome, link: str) -> tuple[str, str]:
         location = driver.find_element(
             By.CLASS_NAME, "styles_jhc__location__W_pVs"
         ).text
-    except:
+    except Exception:
         location = None
     description = []
     desc_classes = [
@@ -54,7 +54,7 @@ def parse(job_name: str, driver: webdriver.Chrome) -> List[dict]:
                 link = job.find_element(By.CLASS_NAME, "title").get_attribute("href")
                 try:
                     company = job.find_element(By.CLASS_NAME, "comp-name").text
-                except:
+                except Exception:
                     company = ""
                 job_data = {
                     "name": name,

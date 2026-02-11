@@ -3,13 +3,13 @@ from . import schemas
 from bson.objectid import ObjectId
 from typing import List, Optional
 from pymongo import AsyncMongoClient
-from .configs import DB_NAME, DB_URL
+from .configs import DB_NAME, DB_URI
 from datetime import datetime, timezone
 
 
 class Database:
-    def __init__(self, url=DB_URL, database_name=DB_NAME):
-        self.client = AsyncMongoClient(url)
+    def __init__(self, uri=DB_URI, database_name=DB_NAME):
+        self.client = AsyncMongoClient(uri)
         self.db = self.client[database_name]
         self.users = self.db["users"]
         self.pending_users = self.db["pending_users"]

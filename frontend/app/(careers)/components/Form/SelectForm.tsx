@@ -4,7 +4,7 @@ type Props = {
   submitForm: (
     input: string,
     formType: "job" | "course",
-    event?: React.MouseEvent<HTMLButtonElement, MouseEvent> | undefined
+    event?: React.MouseEvent<HTMLButtonElement, MouseEvent> | undefined,
   ) => Promise<void>;
 };
 
@@ -13,38 +13,40 @@ export default function SelectForm({ submitForm }: Props) {
 
   return (
     <>
-      <div className="my-4 flex flex-col items-start justify-start">
-        <label htmlFor="formInput" className="mb-2 block">
-          Enter a name
+      <div className="form-control flex flex-col items-center w-[90%] md:w-[80%] my-6">
+        <label htmlFor="formInput" className="label">
+          <span className="label-text font-semibold text-base mb-2">
+            Search by job/course name:
+          </span>
         </label>
         <input
           type="text"
           id="formInput"
-          className={"bg-base-100 border border-base-content rounded p-2"}
-          placeholder={"Enter a name..."}
+          className="input input-bordered focus:input-primary input-lg w-full"
+          placeholder="E.g., Software Engineer, Data Scientist, Product Manager..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
         />
       </div>
-      <div className="flex flex-row gap-2">
+      <div className="flex flex-row gap-3 justify-center flex-wrap">
         <button
-          className="btn btn-outline rounded-lg"
+          className="btn btn-primary gap-2 rounded-lg"
           onClick={(e) => {
             submitForm(input, "job", e);
             setInput("");
           }}
         >
-          Get Jobs
+          💼 Get Jobs
         </button>
         <button
-          className="btn btn-outline rounded-lg"
+          className="btn btn-secondary gap-2 rounded-lg"
           onClick={(e) => {
             submitForm(input, "course", e);
             setInput("");
           }}
         >
-          Get Courses
+          🎓 Get Courses
         </button>
       </div>
     </>

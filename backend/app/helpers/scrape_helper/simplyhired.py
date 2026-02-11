@@ -63,13 +63,13 @@ def parse(job_name: str, driver: webdriver.Chrome) -> List[dict]:
                     company = job.find_element(
                         By.CSS_SELECTOR, "[data-testid='companyName']"
                     ).text
-                except:
+                except Exception:
                     pass
                 try:
                     location = job.find_element(
                         By.CSS_SELECTOR, "[data-testid='searchSerpJobLocation']"
                     ).text
-                except:
+                except Exception:
                     pass
                 try:
                     salary = job.find_element(
@@ -77,7 +77,7 @@ def parse(job_name: str, driver: webdriver.Chrome) -> List[dict]:
                         "[data-testid='searchSerpJobSalaryConfirmed']",
                     )
                     salary = get_salary(salary.text) if salary else None
-                except:
+                except Exception:
                     salary = None
                 try:
                     description_element = driver.find_element(
@@ -88,7 +88,7 @@ def parse(job_name: str, driver: webdriver.Chrome) -> List[dict]:
                     for element in description_element.find_elements(By.XPATH, "./*"):
                         description_content.append(element.text)
                     description = "\n\n".join(description_content)
-                except:
+                except Exception:
                     description = ""
                 job_data = {
                     "name": name,
