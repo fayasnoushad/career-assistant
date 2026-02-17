@@ -7,7 +7,7 @@ import Footer from "./components/Footer";
 import UniversalModal from "./components/UniversalModal";
 
 export const metadata: Metadata = {
-  title: "Careeer Assistant",
+  title: "Career Assistant",
   description: "A career assistant app",
 };
 
