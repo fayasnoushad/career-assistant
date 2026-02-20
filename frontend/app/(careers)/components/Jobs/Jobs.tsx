@@ -5,6 +5,8 @@ import AboutJob from "./AboutJob";
 import JobMenu from "./JobMenu";
 import api from "@/app/helpers/api";
 import { JobDetails } from "./types";
+import Cookies from "js-cookie";
+import { getLoginStatus } from "@/app/helpers/auth";
 
 export default function Jobs({
   jobName,
@@ -16,6 +18,7 @@ export default function Jobs({
   const [menuSelected, setMenuSelected] = useState<"jobList" | "about">(
     "jobList",
   );
+  const [loginStatus, setLoginStatus] = useState(false);
   const [jobDetails, setJobDetails] = useState<JobDetails>({
     job_name: "",
     description: "",
@@ -24,6 +27,13 @@ export default function Jobs({
     career_scope: "",
     resources: [],
   });
+
+  useEffect(() => {
+    const fetchLoginStatus = async () => {
+      const login = await getLoginStatus();
+      setLoginStatus(login);
+    };
+  }, []);
 
   useEffect(() => {
     // used to make effect effect StrictMode-safe.
@@ -37,12 +47,17 @@ export default function Jobs({
           console.error("Failed to fetch job details:", error);
       }
     };
-    if (jobName.length > 0) fetchJobDetails();
+    if (jobName.length > 0 && loginStatus) fetchJobDetails();
   }, [jobName]);
 
   return (
     <>
-      <JobMenu menuSelected={menuSelected} setMenuSelected={setMenuSelected} />
+      {loginStatus && (
+        <JobMenu
+          menuSelected={menuSelected}
+          setMenuSelected={setMenuSelected}
+        />
+      )}
       {menuSelected === "jobList" ? (
         <Cards content={jobs} type={"job"} />
       ) : (

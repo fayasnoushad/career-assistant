@@ -77,7 +77,7 @@ export default function AuthForm({ registerStatus }: AuthFormProps) {
       {loading ? (
         <Loading />
       ) : (
-        <form className="border-2 border-base-300 bg-base-100 shadow-2xl rounded-3xl max-w-md min-w-1/3 p-8 md:p-10 animate-scaleIn my-[10vh]">
+        <form className="border-2 border-base-300 bg-base-100 shadow-2xl rounded-3xl max-w-md min-w-1/3 p-8 md:p-10 animate-scaleIn my-auto">
           <h2 className="text-center mb-5 md:mb-10 lg:mb-15 text-3xl font-bold bg-linear-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
             {registerStatus ? "Create Account" : "Welcome Back"}
           </h2>

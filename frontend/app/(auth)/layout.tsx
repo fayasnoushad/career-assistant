@@ -18,7 +18,7 @@ export default function AuthLayout({
   }, [router]);
 
   return (
-    <div className="min-h-[80vh] flex flex-col pt-[10vh] items-center">
+    <div className="min-h-[80vh] flex flex-col py-[5vh] items-center">
       <Suspense fallback={<Loading />}>{children}</Suspense>
     </div>
   );
