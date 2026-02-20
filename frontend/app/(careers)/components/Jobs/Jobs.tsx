@@ -5,7 +5,6 @@ import AboutJob from "./AboutJob";
 import JobMenu from "./JobMenu";
 import api from "@/app/helpers/api";
 import { JobDetails } from "./types";
-import Cookies from "js-cookie";
 import { getLoginStatus } from "@/app/helpers/auth";
 
 export default function Jobs({
@@ -33,6 +32,7 @@ export default function Jobs({
       const login = await getLoginStatus();
       setLoginStatus(login);
     };
+    fetchLoginStatus();
   }, []);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function Jobs({
       }
     };
     if (jobName.length > 0 && loginStatus) fetchJobDetails();
-  }, [jobName]);
+  }, [jobName, loginStatus]);
 
   return (
     <>

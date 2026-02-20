@@ -20,9 +20,13 @@ async def scrape_youtube_videos(name: str) -> List[str]:
     driver = await run_in_threadpool(get_web_driver)
     driver.get(url)
     WebDriverWait(driver, 10).until(
-        EC.presence_of_element_located((By.TAG_NAME, "ytd-video-renderer"))
+        EC.presence_of_element_located(
+            (By.CLASS_NAME, "yt-lockup-view-model__metadata")
+        )
     )
-    video_elements = driver.find_elements(By.TAG_NAME, "ytd-video-renderer")
+    video_elements = driver.find_elements(
+        By.CLASS_NAME, "yt-lockup-view-model__metadata"
+    )
     for video in video_elements[:4]:
         video_link = get_video_link(video)
         if video_link:

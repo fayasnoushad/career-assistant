@@ -150,6 +150,8 @@ class Database:
         return jobs
 
     async def add_courses(self, courses: List[dict]):
+        if not courses:
+            return []
         result = await self.courses.insert_many(courses)
         return result.inserted_ids
 

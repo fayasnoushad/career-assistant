@@ -17,7 +17,10 @@ async def get_courses(name: str) -> schemas.Courses:
             courses.append(course)
     if len(courses) < MIN_COURSE_LIMIT:
         driver = await run_in_threadpool(get_web_driver)
-        edx_courses = edx_scrape.parse(driver, name)
+        try:
+            edx_courses = edx_scrape.parse(driver, name)
+        except Exception:
+            edx_courses = []
         ids = await db.add_courses(edx_courses)
         for i in range(len(ids)):
             edx_courses[i]["id"] = str(ids[i])
