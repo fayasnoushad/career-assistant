@@ -37,7 +37,11 @@ export default function Dashboard() {
   }, []);
 
   if (loading) {
-    return <Loading />;
+    return (
+      <main className="min-h-screen flex flex-row justify-center items-center">
+        <Loading />
+      </main>
+    );
   }
 
   if (error) {
