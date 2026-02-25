@@ -67,7 +67,7 @@ export default function ResumeUploadForm({ onUpload }: ResumeUploadFormProps) {
     return validTypes.includes(file.type);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (file) {
       onUpload(file, targetRole, experienceLevel);
