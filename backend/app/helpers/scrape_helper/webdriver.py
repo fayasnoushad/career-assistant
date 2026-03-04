@@ -1,7 +1,7 @@
 # webdriver.py
 import os
-from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.webdriver import WebDriver
 from ...configs import DEV_MODE
 
 
@@ -21,4 +21,4 @@ def get_web_driver():
     if not DEV_MODE:
         options.add_argument("--headless=new")
 
-    return webdriver.Chrome(options=options)
+    return WebDriver(options=options)

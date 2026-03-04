@@ -68,7 +68,11 @@ async def get_job_details_using_name(
         raise HTTPException(status_code=400, detail="Gemini API Key not found")
     job_details = await get_job_details_by_ai(details.name, api_key)
     # Scrape YouTube videos related to the job and add them to the resources
-    resources = await scrape_youtube_videos(details.name)
+    try:
+        resources = await scrape_youtube_videos(details.name)
+    except Exception as e:
+        print(f"Error occurred while scraping YouTube videos: {e}")
+        resources = []
     updated_job_details = schemas.JobDetails(
         job_name=job_details.job_name,
         description=job_details.description,

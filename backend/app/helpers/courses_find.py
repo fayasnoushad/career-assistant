@@ -19,17 +19,20 @@ async def get_courses(name: str) -> schemas.Courses:
         driver = await run_in_threadpool(get_web_driver)
         try:
             edx_courses = edx_scrape.parse(driver, name)
-        except Exception:
-            edx_courses = []
-        ids = await db.add_courses(edx_courses)
-        for i in range(len(ids)):
-            edx_courses[i]["id"] = str(ids[i])
-        courses.extend(edx_courses)
-        youtube_courses = youtube_scrape.parse(driver, name)
-        ids = await db.add_courses(youtube_courses)
-        for i in range(len(ids)):
-            youtube_courses[i]["id"] = str(ids[i])
-        courses.extend(youtube_courses)
+            ids = await db.add_courses(edx_courses)
+            for i in range(len(ids)):
+                edx_courses[i]["id"] = str(ids[i])
+            courses.extend(edx_courses)
+        except Exception as e:
+            print(f"Error occurred while scraping edX: {e}")
+        try:
+            youtube_courses = youtube_scrape.parse(driver, name)
+            ids = await db.add_courses(youtube_courses)
+            for i in range(len(ids)):
+                youtube_courses[i]["id"] = str(ids[i])
+            courses.extend(youtube_courses)
+        except Exception as e:
+            print(f"Error occurred while scraping YouTube: {e}")
         driver.quit()
     return schemas.Courses(courses=courses)
 

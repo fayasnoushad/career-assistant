@@ -22,8 +22,14 @@ async def get_jobs(name: str) -> schemas.Jobs:
     if len(jobs) < MIN_JOB_LIMIT:
         driver = await run_in_threadpool(get_web_driver)
         job_list.clear()
-        job_list.extend(simplyhired.parse(name, driver))
-        job_list.extend(naukri.parse(name, driver))
+        try:
+            job_list.extend(simplyhired.parse(name, driver))
+        except Exception as e:
+            print(f"Error occurred while scraping SimplyHired: {e}")
+        try:
+            job_list.extend(naukri.parse(name, driver))
+        except Exception as e:
+            print(f"Error occurred while scraping Naukri: {e}")
         driver.quit()
         job_list = await db.add_jobs(job_list)
 

@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from ... import schemas
 from typing import List
-from selenium import webdriver
+from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -24,7 +24,7 @@ def get_salary(salary_text: str) -> int:
     return int(salary)
 
 
-def parse(job_name: str, driver: webdriver.Chrome) -> List[dict]:
+def parse(job_name: str, driver: WebDriver) -> List[dict]:
     url = URL.format(job_name.replace(" ", "+"))
     driver.get(url)
     jobs = []
