@@ -6,6 +6,8 @@ import JobMenu from "./JobMenu";
 import api from "@/app/helpers/api";
 import { JobDetails } from "./types";
 import { getLoginStatus } from "@/app/helpers/auth";
+import { useSelector } from "react-redux";
+import { showModal } from "@/app/helpers/modal-manager";
 
 export default function Jobs({
   jobName,
@@ -27,6 +29,8 @@ export default function Jobs({
     resources: [],
   });
 
+  const hasApiKey = useSelector((state: any) => state.apiKey.hasApiKey);
+
   useEffect(() => {
     const fetchLoginStatus = async () => {
       const login = await getLoginStatus();
@@ -44,15 +48,21 @@ export default function Jobs({
         setJobDetails(response.data);
       } catch (error) {
         if (error instanceof Error && error.message !== "canceled")
-          console.error("Failed to fetch job details:", error);
+          showModal({
+            title: "Failed to fetch job details",
+            message:
+              (error as any).response?.data?.detail || "Something went wrong",
+            type: "error",
+            onConfirm: () => {},
+          });
       }
     };
-    if (jobName.length > 0 && loginStatus) fetchJobDetails();
+    if (jobName.length > 0 && loginStatus && hasApiKey) fetchJobDetails();
   }, [jobName, loginStatus]);
 
   return (
     <>
-      {loginStatus && (
+      {loginStatus && hasApiKey && (
         <JobMenu
           menuSelected={menuSelected}
           setMenuSelected={setMenuSelected}

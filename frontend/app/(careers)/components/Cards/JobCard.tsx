@@ -101,12 +101,13 @@ export default function JobCard({
         <div className="modal-box md:min-w-3/5 h-[60%]">
           <h3 className="font-bold text-lg m-2 md:mx-4 lg:mx-6">{job.name}</h3>
           <p className="m-2 mt-4 md:m-4 lg:mx-6">
-            {job.description.split("\n").map((line, index) => (
-              <React.Fragment key={index}>
-                {line}
-                <br />
-              </React.Fragment>
-            ))}
+            {job.description &&
+              job.description.split("\n").map((line, index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
           </p>
           <div className="modal-action flex justify-center md:justify-end">
             <form method="dialog">
