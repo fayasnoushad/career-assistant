@@ -3,7 +3,6 @@ import aiosmtplib
 from .. import schemas
 from pathlib import Path
 from ..database import db
-from typing import Optional
 from jose import jwt, JWTError
 from email.message import EmailMessage
 from passlib.hash import sha256_crypt
@@ -44,7 +43,7 @@ def generate_otp() -> str:
 def create_access_token(
     data: dict,
     role: str = "user",
-    expires_delta: Optional[timedelta] = None,
+    expires_delta: timedelta | None = None,
 ):
     """
     Access token is used for identifying user

@@ -1,28 +1,27 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional, List
 
 
 class UserCreate(BaseModel):
     first_name: str
-    last_name: Optional[str] = ""
+    last_name: str | None = ""
     email: EmailStr
     password: str
 
 
 class User(BaseModel):
     first_name: str
-    last_name: Optional[str] = ""
+    last_name: str | None = ""
     email: EmailStr
-    gemini_api: Optional[str] = ""
-    career_goal: Optional[str] = ""
-    admin: Optional[bool] = False
+    gemini_api: str | None = ""
+    career_goal: str | None = ""
+    admin: bool | None = False
 
 
 class UserUpdate(BaseModel):
     first_name: str
-    last_name: Optional[str] = ""
-    gemini_api: Optional[str] = ""
-    career_goal: Optional[str] = ""
+    last_name: str | None = ""
+    gemini_api: str | None = ""
+    career_goal: str | None = ""
 
 
 class UserLogin(BaseModel):
@@ -59,11 +58,11 @@ class Id(BaseModel):
 
 class JobScrape(BaseModel):
     name: str
-    company: Optional[str] = None
-    location: Optional[str] = None
-    salary: Optional[int] = None
+    company: str | None = None
+    location: str | None = None
+    salary: int | None = None
     link: str
-    description: Optional[str] = None
+    description: str | None = None
     time: str
 
 
@@ -72,23 +71,23 @@ class Job(JobScrape):
 
 
 class Jobs(BaseModel):
-    jobs: List[Job]
+    jobs: list[Job]
 
 
 class JobNames(BaseModel):
-    jobs: List[str]
+    jobs: list[str]
 
 
 class JobDetailsByAI(BaseModel):
     job_name: str
     description: str
-    responsibilities: List[str]
-    minimum_skills_required: List[str]
+    responsibilities: list[str]
+    minimum_skills_required: list[str]
     career_scope: str
 
 
 class JobDetails(JobDetailsByAI):
-    resources: List[str]
+    resources: list[str]
 
 
 class Salary(BaseModel):
@@ -101,24 +100,24 @@ class Course(BaseModel):
     channel: str
     channel_link: str
     link: str
-    duration: Optional[str] = None
-    level: Optional[str] = None
+    duration: str | None = None
+    level: str | None = None
 
 
 class Courses(BaseModel):
-    courses: List[Course]
+    courses: list[Course]
 
 
 class CourseNames(BaseModel):
-    courses: List[str]
+    courses: list[str]
 
 
 class Roadmap(BaseModel):
-    roadmap: List[str]
+    roadmap: list[str]
 
 
 class Roadmaps(BaseModel):
-    roadmaps: List[List[str]]
+    roadmaps: list[list[str]]
 
 
 class SavedRoadmap(Roadmap):
@@ -126,7 +125,7 @@ class SavedRoadmap(Roadmap):
 
 
 class SavedRoadmaps(BaseModel):
-    roadmaps: List[SavedRoadmap]
+    roadmaps: list[SavedRoadmap]
 
 
 class SkillGap(BaseModel):
@@ -137,37 +136,37 @@ class SkillGap(BaseModel):
 
 class ResumeFeedback(BaseModel):
     overall_score: int
-    strengths: List[str]
-    weaknesses: List[str]
-    skill_gaps: List[SkillGap]
-    improvement_suggestions: List[str]
-    recommended_courses: List[str]
-    formatting_tips: List[str]
+    strengths: list[str]
+    weaknesses: list[str]
+    skill_gaps: list[SkillGap]
+    improvement_suggestions: list[str]
+    recommended_courses: list[str]
+    formatting_tips: list[str]
 
 
 class ResumeAnalysisRequest(BaseModel):
-    target_role: Optional[str] = None
-    experience_level: Optional[str] = None
+    target_role: str | None = None
+    experience_level: str | None = None
 
 
 class ResumeAnalysis(BaseModel):
     id: str
     filename: str
     upload_date: str
-    target_role: Optional[str] = None
-    experience_level: Optional[str] = None
+    target_role: str | None = None
+    experience_level: str | None = None
     feedback: ResumeFeedback
 
 
 class ResumeAnalysisList(BaseModel):
-    analyses: List[ResumeAnalysis]
+    analyses: list[ResumeAnalysis]
 
 
 class DashboardData(BaseModel):
-    career_goal: Optional[str] = None
-    resume_score: Optional[int] = None
-    score_trend: Optional[int] = None
-    resume_scores_history: List[int] = []
+    career_goal: str | None = None
+    resume_score: int | None = None
+    score_trend: int | None = None
+    resume_scores_history: list[int] = []
     saved_jobs_count: int = 0
     roadmap_progress: float = 0.0
     total_roadmap_steps: int = 0

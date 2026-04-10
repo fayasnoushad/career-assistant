@@ -5,7 +5,6 @@ Extracts text and metadata from PDF and DOCX resume files
 
 import io
 import re
-from typing import Dict
 from PyPDF2 import PdfReader
 from docx import Document
 
@@ -18,7 +17,7 @@ class ResumeParser:
         self.filename = filename
         self.file_extension = filename.split(".")[-1].lower()
 
-    def parse(self) -> Dict[str, str]:
+    def parse(self) -> dict[str, str]:
         """
         Parse the resume and return extracted text and metadata
 
@@ -135,7 +134,7 @@ class ResumeParser:
         return "\n".join(contact_info) if contact_info else ""
 
 
-def parse_resume(file_content: bytes, filename: str) -> Dict[str, str]:
+def parse_resume(file_content: bytes, filename: str) -> dict[str, str]:
     """
     Convenience function to parse a resume file
 

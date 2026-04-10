@@ -4,7 +4,6 @@ Generates PDF and DOCX exports of resume analysis results
 """
 
 from io import BytesIO
-from typing import Dict
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
@@ -17,7 +16,7 @@ from docx.shared import Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 
-def generate_pdf(analysis: Dict) -> BytesIO:
+def generate_pdf(analysis: dict) -> BytesIO:
     """
     Generate a PDF export of the resume analysis
 
@@ -151,7 +150,7 @@ def generate_pdf(analysis: Dict) -> BytesIO:
     return buffer
 
 
-def generate_docx(analysis: Dict) -> BytesIO:
+def generate_docx(analysis: dict) -> BytesIO:
     """
     Generate a DOCX export of the resume analysis
 

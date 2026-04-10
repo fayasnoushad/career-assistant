@@ -4,7 +4,6 @@ Analyzes resume content using Gemini AI to provide skill-gap analysis and improv
 """
 
 import asyncio
-from typing import Optional
 from google import genai
 from .. import schemas
 
@@ -19,8 +18,8 @@ class ResumeAnalyzer:
     async def analyze_resume(
         self,
         resume_text: str,
-        target_role: Optional[str] = None,
-        experience_level: Optional[str] = None,
+        target_role: str | None = None,
+        experience_level: str | None = None,
     ) -> schemas.ResumeFeedback:
         """
         Analyze a resume and provide comprehensive feedback
@@ -52,8 +51,8 @@ class ResumeAnalyzer:
     def _build_analysis_query(
         self,
         resume_text: str,
-        target_role: Optional[str],
-        experience_level: Optional[str],
+        target_role: str | None,
+        experience_level: str | None,
     ) -> str:
         """Build the analysis prompt for Gemini"""
         query = f"""
@@ -88,8 +87,8 @@ Be specific, constructive, and actionable in your feedback. Focus on helping the
 async def analyze_resume(
     resume_text: str,
     api_key: str,
-    target_role: Optional[str] = None,
-    experience_level: Optional[str] = None,
+    target_role: str | None = None,
+    experience_level: str | None = None,
 ) -> schemas.ResumeFeedback:
     """
     Convenience function to analyze a resume

@@ -1,4 +1,3 @@
-from typing import List
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -30,7 +29,7 @@ def get_course_details(playlist: WebElement) -> dict[str, str | None]:
     return course_data
 
 
-def parse(driver: WebDriver, name: str) -> List[dict]:
+def parse(driver: WebDriver, name: str) -> list[dict]:
     courses = []
     url = URL.format(name)
     driver.get(url)

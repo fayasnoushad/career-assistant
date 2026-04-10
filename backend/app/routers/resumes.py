@@ -3,16 +3,15 @@ Resume Router
 Handles resume upload, analysis, and retrieval endpoints
 """
 
-from datetime import datetime, timezone
-from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
-from fastapi.responses import StreamingResponse
-from typing import Optional
 from .. import schemas
 from ..database import db
 from ..routers.auth import get_user_id
 from ..helpers.resume_parser import parse_resume
 from ..helpers.resume_analyzer import analyze_resume
 from ..helpers.resume_export import generate_pdf, generate_docx
+from datetime import datetime, timezone
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from fastapi.responses import StreamingResponse
 
 router = APIRouter(prefix="/resumes", tags=["resumes"])
 
@@ -20,8 +19,8 @@ router = APIRouter(prefix="/resumes", tags=["resumes"])
 @router.post("/upload", response_model=schemas.ResumeAnalysis)
 async def upload_resume(
     file: UploadFile = File(...),
-    target_role: Optional[str] = Form(None),
-    experience_level: Optional[str] = Form(None),
+    target_role: str | None = Form(None),
+    experience_level: str | None = Form(None),
     user_id: str = Depends(get_user_id),
 ):
     """

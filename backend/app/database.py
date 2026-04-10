@@ -1,7 +1,6 @@
 import re
 from . import schemas
 from bson.objectid import ObjectId
-from typing import List, Optional
 from pymongo import AsyncMongoClient
 from .configs import DB_NAME, DB_URI
 from datetime import datetime, timezone
@@ -75,7 +74,7 @@ class Database:
             },
         )
 
-    async def get_api(self, user_id: str) -> Optional[str]:
+    async def get_api(self, user_id: str) -> str | None:
         user = await self.users.find_one({"_id": ObjectId(user_id)})
         return user.get("gemini_api") if user else None
 
@@ -98,7 +97,7 @@ class Database:
         result = await self.jobs.insert_one(job)
         return str(result.inserted_id)
 
-    async def add_jobs(self, jobs: List[dict]) -> List[schemas.Job]:
+    async def add_jobs(self, jobs: list[dict]) -> list[schemas.Job]:
         job_list = []
         for job in jobs:
             try:
@@ -117,7 +116,7 @@ class Database:
             del job["_id"]
         return job
 
-    async def get_jobs(self, job_name: str) -> List[dict]:
+    async def get_jobs(self, job_name: str) -> list[dict]:
         jobs = []
         async for job in self.jobs.find(
             {"name": {"$regex": re.escape(job_name), "$options": "i"}}
@@ -149,7 +148,7 @@ class Database:
                 jobs.append(job)
         return jobs
 
-    async def add_courses(self, courses: List[dict]):
+    async def add_courses(self, courses: list[dict]):
         if not courses:
             return []
         result = await self.courses.insert_many(courses)
@@ -189,7 +188,7 @@ class Database:
                 courses.append(course)
         return courses
 
-    async def save_roadmap(self, user_id, roadmap: List[str]):
+    async def save_roadmap(self, user_id, roadmap: list[str]):
         await self.saved_roadmaps.insert_one(
             {"user_id": ObjectId(user_id), "roadmap": roadmap}
         )
@@ -241,7 +240,7 @@ class Database:
         result = await self.resumes.insert_one(resume_data)
         return str(result.inserted_id)
 
-    async def get_resume_analyses(self, user_id: str) -> List[dict]:
+    async def get_resume_analyses(self, user_id: str) -> list[dict]:
         """Get all resume analyses for a user"""
         analyses = []
         async for resume in self.resumes.find({"user_id": ObjectId(user_id)}).sort(
@@ -253,7 +252,7 @@ class Database:
             analyses.append(resume)
         return analyses
 
-    async def get_resume_analysis(self, user_id: str, resume_id: str) -> Optional[dict]:
+    async def get_resume_analysis(self, user_id: str, resume_id: str) -> dict | None:
         """Get a specific resume analysis"""
         resume = await self.resumes.find_one(
             {"_id": ObjectId(resume_id), "user_id": ObjectId(user_id)}

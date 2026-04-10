@@ -1,4 +1,3 @@
-from typing import List
 from .webdriver import get_web_driver
 from fastapi.concurrency import run_in_threadpool
 from selenium.webdriver.common.by import By
@@ -14,7 +13,7 @@ def get_video_link(video: WebElement) -> str | None:
     return video_link
 
 
-async def scrape_youtube_videos(name: str) -> List[str]:
+async def scrape_youtube_videos(name: str) -> list[str]:
     videos = []
     url = URL.format(name)
     driver = await run_in_threadpool(get_web_driver)

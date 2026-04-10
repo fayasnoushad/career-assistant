@@ -1,5 +1,4 @@
 from ... import schemas
-from typing import List
 from datetime import datetime, timezone
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
@@ -37,13 +36,13 @@ def get_job_details(driver: WebDriver, link: str) -> tuple[str, str]:
     return (location or "", "\n\n".join(description).strip())
 
 
-def parse(job_name: str, driver: WebDriver) -> List[dict]:
+def parse(job_name: str, driver: WebDriver) -> list[dict]:
     url = URL.format(job_name.replace(" ", "-") + "-jobs")
     driver.get(url)
     WebDriverWait(driver, 10).until(
         EC.presence_of_element_located((By.CLASS_NAME, "srp-jobtuple-wrapper"))
     )
-    jobs: List[dict] = []
+    jobs: list[dict] = []
     count = 0
     page_no = 1
     while True:
