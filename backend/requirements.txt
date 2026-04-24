@@ -2,8 +2,7 @@ fastapi[standard]
 selenium
 python-dotenv
 google-genai
-pymongo
-dnspython
+pymongo[srv]
 passlib
 python-jose
 aiosmtplib
