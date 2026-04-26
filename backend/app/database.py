@@ -104,7 +104,7 @@ class Database:
                 inserted_job_id = await self.add_job(job)
                 job.pop("_id", None)
                 job["id"] = inserted_job_id
-                job_list.append(schemas.Job(**job))
+                job_list.append(schemas.Job.model_validate(job))
             except Exception:
                 pass
         return job_list

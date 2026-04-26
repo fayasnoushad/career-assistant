@@ -53,7 +53,7 @@ async def predict_salary(details: schemas.Id, user_id: str = Depends(get_user_id
     job = await db.get_job(details.id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
-    return await get_predicted_salary(schemas.Job(**job), api_key)
+    return await get_predicted_salary(schemas.Job.model_validate(job), api_key)
 
 
 @router.post("/details/", response_model=schemas.JobDetails)

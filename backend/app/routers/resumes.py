@@ -104,7 +104,7 @@ async def get_resume_analyses(user_id: str = Depends(get_user_id)):
                 upload_date=analysis["upload_date"],
                 target_role=analysis.get("target_role"),
                 experience_level=analysis.get("experience_level"),
-                feedback=schemas.ResumeFeedback(**analysis["feedback"]),
+                feedback=schemas.ResumeFeedback.model_validate(analysis["feedback"]),
             )
             for analysis in analyses
         ]
@@ -135,7 +135,7 @@ async def get_resume_analysis(
             upload_date=analysis["upload_date"],
             target_role=analysis.get("target_role"),
             experience_level=analysis.get("experience_level"),
-            feedback=schemas.ResumeFeedback(**analysis["feedback"]),
+            feedback=schemas.ResumeFeedback.model_validate(analysis["feedback"]),
         )
     except HTTPException:
         raise

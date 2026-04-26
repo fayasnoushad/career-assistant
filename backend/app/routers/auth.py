@@ -196,7 +196,7 @@ async def get_user_details(user_id: str = Depends(get_user_id)):
     user_data = await db.get_user(user_id=user_id)
     if not user_data:
         raise HTTPException(status_code=404, detail="User not found")
-    return schemas.User(**user_data)
+    return schemas.User.model_validate(user_data)
 
 
 @router.patch("/update/")
