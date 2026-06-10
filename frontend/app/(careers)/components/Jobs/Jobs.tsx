@@ -10,68 +10,71 @@ import { showModal } from "@/app/helpers/modal-manager";
 import { useApiStore } from "@/store";
 
 export default function Jobs({
-  jobName,
-  jobs,
+    jobName,
+    jobs,
 }: {
-  jobName: string;
-  jobs: JobType[];
+    jobName: string;
+    jobs: JobType[];
 }) {
-  const [menuSelected, setMenuSelected] = useState<"jobList" | "about">(
-    "jobList",
-  );
-  const [loginStatus, setLoginStatus] = useState(false);
-  const [jobDetails, setJobDetails] = useState<JobDetails>({
-    job_name: "",
-    description: "",
-    responsibilities: [],
-    minimum_skills_required: [],
-    career_scope: "",
-    resources: [],
-  });
-  const hasApiKey = useApiStore((state) => state.apiKeyStatus);
+    const [menuSelected, setMenuSelected] = useState<"jobList" | "about">(
+        "jobList",
+    );
+    const [loginStatus, setLoginStatus] = useState(false);
+    const [jobDetails, setJobDetails] = useState<JobDetails>({
+        job_name: "",
+        description: "",
+        responsibilities: [],
+        minimum_skills_required: [],
+        career_scope: "",
+        resources: [],
+    });
+    const hasApiKey = useApiStore((state) => state.apiKeyStatus);
 
-  useEffect(() => {
-    const fetchLoginStatus = async () => {
-      const login = await getLoginStatus();
-      setLoginStatus(login);
-    };
-    fetchLoginStatus();
-  }, []);
+    useEffect(() => {
+        const fetchLoginStatus = async () => {
+            const login = await getLoginStatus();
+            setLoginStatus(login);
+        };
+        fetchLoginStatus();
+    }, []);
 
-  useEffect(() => {
-    // used to make effect effect StrictMode-safe.
-    // It prevents api calling twice in development mode.
-    const fetchJobDetails = async () => {
-      try {
-        const response = await api.post("/jobs/details/", { name: jobName });
-        setJobDetails(response.data);
-      } catch (error) {
-        if (error instanceof Error && error.message !== "canceled")
-          showModal({
-            title: "Failed to fetch job details",
-            message:
-              (error as any).response?.data?.detail || "Something went wrong",
-            type: "error",
-            onConfirm: () => {},
-          });
-      }
-    };
-    if (jobName.length > 0 && loginStatus && hasApiKey) fetchJobDetails();
-  }, [jobName, loginStatus]);
+    useEffect(() => {
+        // used to make effect effect StrictMode-safe.
+        // It prevents api calling twice in development mode.
+        const fetchJobDetails = async () => {
+            try {
+                const response = await api.post("/jobs/details/", {
+                    name: jobName,
+                });
+                setJobDetails(response.data);
+            } catch (error) {
+                if (error instanceof Error && error.message !== "canceled")
+                    showModal({
+                        title: "Failed to fetch job details",
+                        message:
+                            (error as any).response?.data?.detail ||
+                            "Something went wrong",
+                        type: "error",
+                        onConfirm: () => {},
+                    });
+            }
+        };
+        if (jobName.length > 0 && loginStatus && hasApiKey) fetchJobDetails();
+    }, [jobName, loginStatus]);
 
-  return (
-    <>
-      {loginStatus && hasApiKey && (
-        <JobMenu
-          menuSelected={menuSelected}
-          setMenuSelected={setMenuSelected}
-        />
-      )}
-      {menuSelected === "jobList" ? (
-        <Cards content={jobs} type={"job"} />
-      ) : (
-        <AboutJob jobDetails={jobDetails} />
-      )}
-    </>
-  );
+    return (
+        <>
+            {loginStatus && hasApiKey && (
+                <JobMenu
+                    menuSelected={menuSelected}
+                    setMenuSelected={setMenuSelected}
+                />
+            )}
+            {menuSelected === "jobList" ? (
+                <Cards content={jobs} type={"job"} />
+            ) : (
+                <AboutJob jobDetails={jobDetails} />
+            )}
+        </>
+    );
 }

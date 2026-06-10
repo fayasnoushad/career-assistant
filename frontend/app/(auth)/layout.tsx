@@ -5,21 +5,21 @@ import React, { Suspense, useEffect } from "react";
 import Loading from "../components/Loading";
 
 export default function AuthLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  const router = useRouter();
+    const router = useRouter();
 
-  useEffect(() => {
-    if (Cookies.get("token")) {
-      router.push("/");
-    }
-  }, [router]);
+    useEffect(() => {
+        if (Cookies.get("token")) {
+            router.push("/");
+        }
+    }, [router]);
 
-  return (
-    <div className="min-h-[80vh] flex flex-col py-[5vh] items-center">
-      <Suspense fallback={<Loading />}>{children}</Suspense>
-    </div>
-  );
+    return (
+        <div className="min-h-[80vh] flex flex-col py-[5vh] items-center">
+            <Suspense fallback={<Loading />}>{children}</Suspense>
+        </div>
+    );
 }

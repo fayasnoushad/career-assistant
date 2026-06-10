@@ -6,29 +6,29 @@ import Footer from "./components/Footer";
 import UniversalModal from "./components/UniversalModal";
 
 export const metadata: Metadata = {
-  title: "Career Assistant",
-  description: "A career assistant app",
+    title: "Career Assistant",
+    description: "A career assistant app",
 };
 
 export default function RootLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <ThemeProvider
-          attribute="data-theme"
-          defaultTheme="system"
-          enableSystem={true}
-        >
-          <Header />
-          {children}
-          <Footer />
-          <UniversalModal />
-        </ThemeProvider>
-      </body>
-    </html>
-  );
+    return (
+        <html lang="en" suppressHydrationWarning>
+            <body>
+                <ThemeProvider
+                    attribute="data-theme"
+                    defaultTheme="system"
+                    enableSystem={true}
+                >
+                    <Header />
+                    {children}
+                    <Footer />
+                    <UniversalModal />
+                </ThemeProvider>
+            </body>
+        </html>
+    );
 }
