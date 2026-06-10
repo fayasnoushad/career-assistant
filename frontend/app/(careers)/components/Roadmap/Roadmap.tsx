@@ -1,6 +1,8 @@
 import api from "@/app/helpers/api";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { showModal } from "@/app/helpers/modal-manager";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CourseType } from "../Cards/types";
 
 interface Props {
     roadmap: string[];
@@ -20,39 +22,46 @@ export default function Roadmap({
     index = 0,
 }: Props) {
     const [activeIndex, setActiveIndex] = useState(-1);
-    const [cache, setCache] = useState<{ [key: string]: object[] }>({});
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        setActiveIndex(-1);
-    }, [roadmap]);
+    useEffect(() => setActiveIndex(-1), [roadmap]);
 
     const scrapeData = async (name: string, index: number) => {
         setLoading(true);
         setActiveIndex(index);
-        if (name in cache) {
-            setContent(cache[name]);
-        } else {
-            const response = await api.post("/courses/category/", {
-                name: name,
-            });
-            setContent(response.data.courses);
-            setCache((prevCache) => ({
-                ...prevCache,
-                [name]: response.data.courses,
-            }));
-        }
+        const courses = await queryClient.fetchQuery({
+            queryKey: ["course", name],
+            queryFn: async () => {
+                const response = await api.post("/courses/category/", {
+                    name: name,
+                });
+                return response.data.courses as CourseType[];
+            },
+            staleTime: Infinity,
+            gcTime: Infinity,
+        });
+        setContent(courses);
         setLoading(false);
     };
 
-    const save = async () => {
-        await api.post("/courses/save_roadmap/", { roadmap });
-        showModal({
-            title: "Success",
-            message: "Roadmap saved successfully!",
-            type: "success",
-            onConfirm: () => {},
-        });
-    };
+    const { mutate: saveRoadmap } = useMutation({
+        mutationFn: async () =>
+            await api.post("/courses/save_roadmap/", { roadmap }),
+        onSuccess: () =>
+            showModal({
+                title: "Success",
+                message: "Roadmap saved successfully!",
+                type: "success",
+                onConfirm: () => {},
+            }),
+        onError: () =>
+            showModal({
+                title: "Roadmap not saved",
+                message: "Roadmap saving failed!",
+                type: "error",
+                onConfirm: () => {},
+            }),
+    });
 
     return (
         <>
@@ -85,7 +94,7 @@ export default function Roadmap({
                 <div className="flex flex-row justify-end items-center gap-2 w-[80%] mx-10 md:mx-20 lg:mx-30 px-5">
                     <button
                         className="btn btn-soft btn-sm rounded-lg"
-                        onClick={save}
+                        onClick={() => saveRoadmap()}
                     >
                         Save Roadmap
                     </button>

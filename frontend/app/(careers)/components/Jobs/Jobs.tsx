@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Cards from "../Cards/Cards";
 import { JobType } from "../Cards/types";
 import AboutJob from "./AboutJob";
 import JobMenu from "./JobMenu";
 import api from "@/app/helpers/api";
-import { JobDetails } from "./types";
 import { showModal } from "@/app/helpers/modal-manager";
 import { useApiStore, useAuthStore } from "@/store";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Jobs({
     jobName,
@@ -18,45 +18,37 @@ export default function Jobs({
     const [menuSelected, setMenuSelected] = useState<"jobList" | "about">(
         "jobList",
     );
-    const [jobDetails, setJobDetails] = useState<JobDetails>({
-        job_name: "",
-        description: "",
-        responsibilities: [],
-        minimum_skills_required: [],
-        career_scope: "",
-        resources: [],
-    });
     const loginStatus = useAuthStore((state) => state.loginStatus);
     const apiKeyStatus = useApiStore((state) => state.apiKeyStatus);
 
-    useEffect(() => {
-        // used to make effect effect StrictMode-safe.
-        // It prevents api calling twice in development mode.
-        const fetchJobDetails = async () => {
-            try {
-                const response = await api.post("/jobs/details/", {
-                    name: jobName,
-                });
-                setJobDetails(response.data);
-            } catch (error) {
-                if (error instanceof Error && error.message !== "canceled")
-                    showModal({
-                        title: "Failed to fetch job details",
-                        message:
-                            (error as any).response?.data?.detail ||
-                            "Something went wrong",
-                        type: "error",
-                        onConfirm: () => {},
-                    });
-            }
-        };
-        if (jobName.length > 0 && loginStatus && apiKeyStatus)
-            fetchJobDetails();
-    }, [jobName, loginStatus]);
+    const {
+        data: jobDetails,
+        isError,
+        error,
+    } = useQuery({
+        queryKey: ["job-details", jobName],
+        queryFn: async () => {
+            console.log(jobName, loginStatus, apiKeyStatus);
+            const response = await api.post("/jobs/details/", {
+                name: jobName,
+            });
+            return response.data;
+        },
+        staleTime: Infinity,
+        gcTime: Infinity,
+    });
+    if (isError)
+        showModal({
+            title: "Failed to fetch job details",
+            message:
+                (error as any).response?.data?.detail || "Something went wrong",
+            type: "error",
+            onConfirm: () => {},
+        });
 
     return (
         <>
-            {loginStatus && apiKeyStatus && (
+            {jobDetails && (
                 <JobMenu
                     menuSelected={menuSelected}
                     setMenuSelected={setMenuSelected}
@@ -65,7 +57,7 @@ export default function Jobs({
             {menuSelected === "jobList" ? (
                 <Cards content={jobs} type={"job"} />
             ) : (
-                <AboutJob jobDetails={jobDetails} />
+                jobDetails && <AboutJob jobDetails={jobDetails} />
             )}
         </>
     );

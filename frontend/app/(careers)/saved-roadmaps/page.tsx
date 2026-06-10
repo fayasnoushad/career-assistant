@@ -32,7 +32,7 @@ export default function SavedRoadmaps() {
         staleTime: 5 * 60 * 1000,
     });
 
-    const deleteRoadmap = useMutation({
+    const { mutate: deleteRoadmap } = useMutation({
         mutationFn: async (id: string) =>
             await api.post("/courses/remove_roadmap/", { id }),
         onMutate: (roadmapId) =>
@@ -77,7 +77,7 @@ export default function SavedRoadmaps() {
             message:
                 "Are you sure you want to remove this roadmap? This action cannot be undone.",
             type: "confirm",
-            onConfirm: () => deleteRoadmap.mutate(roadmapId),
+            onConfirm: () => deleteRoadmap(roadmapId),
         });
     };
 

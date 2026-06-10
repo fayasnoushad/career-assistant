@@ -1,5 +1,7 @@
 import api from "@/app/helpers/api";
+import { useQueryClient } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { JobType } from "../Cards/types";
 
 export default function JobList({
     names,
@@ -11,25 +13,25 @@ export default function JobList({
     setLoading: Dispatch<SetStateAction<boolean>>;
 }) {
     const [activeIndex, setActiveIndex] = useState(-1);
-    const [cache, setCache] = useState<{ [key: string]: object[] }>({});
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        setActiveIndex(-1);
-    }, [names]);
+    useEffect(() => setActiveIndex(-1), [names]);
 
     const scrapeData = async (name: string, index: number) => {
         setLoading(true);
         setActiveIndex(index);
-        if (name in cache) {
-            setJobs(cache[name]);
-        } else {
-            const response = await api.post("/jobs/category/", { name: name });
-            setJobs(response.data.jobs);
-            setCache((prevCache) => ({
-                ...prevCache,
-                [name]: response.data.jobs,
-            }));
-        }
+        const jobs = await queryClient.fetchQuery({
+            queryKey: ["job", name],
+            queryFn: async () => {
+                const response = await api.post("/jobs/category/", {
+                    name: name,
+                });
+                return response.data.jobs as JobType[];
+            },
+            staleTime: Infinity,
+            gcTime: Infinity,
+        });
+        setJobs(jobs);
         setLoading(false);
     };
 
