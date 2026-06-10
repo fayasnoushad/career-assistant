@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getLoginStatus } from "@/app/helpers/auth";
 import Roadmap from "./components/Roadmap";
-import Loading from "@/app/components/Loading";
+import Loading from "@/app/loading";
 import { showModal } from "@/app/helpers/modal-manager";
 
 type Roadmap = {
