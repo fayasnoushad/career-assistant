@@ -6,7 +6,7 @@ import Roadmap from "./components/Roadmap";
 import Loading from "@/app/loading";
 import { showModal } from "@/app/helpers/modal-manager";
 import { useAuthStore } from "@/store";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 type Roadmap = {
     id: string;
@@ -32,21 +32,32 @@ export default function SavedRoadmaps() {
         staleTime: 5 * 60 * 1000,
     });
 
-    const handleDelteRoadmap = async (roadmapId: string) => {
-        await api.post("/courses/remove_roadmap/", { id: roadmapId });
-        queryClient.setQueryData<Roadmap[]>(
-            ["saved-roadmaps"],
-            (prevRoadmaps) =>
-                prevRoadmaps?.filter((roadmap) => roadmap.id !== roadmapId) ??
-                [],
-        );
-        showModal({
-            title: "Deleted",
-            message: "Roadmap removed successfully!",
-            type: "success",
-            onConfirm: () => {},
-        });
-    };
+    const deleteRoadmap = useMutation({
+        mutationFn: async (id: string) =>
+            await api.post("/courses/remove_roadmap/", { id }),
+        onMutate: (roadmapId) =>
+            queryClient.setQueryData<Roadmap[]>(
+                ["saved-roadmaps"],
+                (prevRoadmaps) =>
+                    prevRoadmaps?.filter(
+                        (roadmap) => roadmap.id !== roadmapId,
+                    ) ?? [],
+            ),
+        onSuccess: () =>
+            showModal({
+                title: "Deleted",
+                message: "Roadmap removed successfully!",
+                type: "success",
+                onConfirm: () => {},
+            }),
+        onError: () =>
+            showModal({
+                title: "Error",
+                message: "Failed to delete roadmap",
+                type: "error",
+                onConfirm: () => {},
+            }),
+    });
 
     const [learnedCourses, setLearnedCourses] = useState<Set<string>>(
         new Set(),
@@ -66,7 +77,7 @@ export default function SavedRoadmaps() {
             message:
                 "Are you sure you want to remove this roadmap? This action cannot be undone.",
             type: "confirm",
-            onConfirm: () => handleDelteRoadmap(roadmapId),
+            onConfirm: () => deleteRoadmap.mutate(roadmapId),
         });
     };
 

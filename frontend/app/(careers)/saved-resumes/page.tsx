@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { showModal } from "@/app/helpers/modal-manager";
 import { useAuthStore } from "@/store";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface SkillGap {
     skill: string;
@@ -48,46 +48,50 @@ export default function SavedResumes() {
         isPending,
         isSuccess,
         isError,
-        error,
     } = useQuery({
-        queryKey: ["saved-courses"],
+        queryKey: ["saved-resumes"],
         queryFn: fetchAnalyses,
         staleTime: 5 * 60 * 1000,
     });
 
-    if (isError) {
+    if (isError)
         showModal({
             title: "Error",
             message: "Failed to fetch analyses",
             type: "error",
             onConfirm: () => {},
         });
-    }
+
+    const deleteAnalysis = useMutation({
+        mutationFn: async (id: string) => await api.delete(`/resumes/${id}`),
+        onMutate: (id: string) =>
+            queryClient.setQueryData<ResumeAnalysis[]>(
+                ["saved-analyses"],
+                (prevAnalyses) =>
+                    prevAnalyses?.filter((resume) => resume.id !== id) ?? [],
+            ),
+        onSuccess: () =>
+            showModal({
+                title: "Deleted",
+                message: "Analysis removed successfully!",
+                type: "success",
+                onConfirm: () => {},
+            }),
+        onError: () =>
+            showModal({
+                title: "Error",
+                message: "Failed to delete analysis",
+                type: "error",
+                onConfirm: () => {},
+            }),
+    });
 
     const handleDelete = (id: string) => {
         showModal({
             title: "Confirm Deletion",
             message: "Are you sure you want to delete this analysis?",
             type: "confirm",
-            onConfirm: async () => {
-                try {
-                    await api.delete(`/resumes/${id}`);
-                    queryClient.setQueryData<ResumeAnalysis[]>(
-                        ["saved-analyses"],
-                        (prevAnalyses) =>
-                            prevAnalyses?.filter(
-                                (resume) => resume.id !== id,
-                            ) ?? [],
-                    );
-                } catch (error) {
-                    showModal({
-                        title: "Error",
-                        message: "Failed to delete analysis",
-                        type: "error",
-                        onConfirm: () => {},
-                    });
-                }
-            },
+            onConfirm: () => deleteAnalysis.mutate(id),
             onCancel: () => {},
         });
     };
