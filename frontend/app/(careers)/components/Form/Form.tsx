@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import Cookies from "js-cookie";
-import { useSelector } from "react-redux";
 import api from "@/app/helpers/api";
 import PromptForm from "./PromptForm";
 import SelectForm from "./SelectForm";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { showModal } from "@/app/helpers/modal-manager";
+import { useApiStore } from "@/store";
 
 type Props = {
   setJobName: Dispatch<SetStateAction<string>>;
@@ -35,7 +35,7 @@ export default function Form({
 
   const [promptForm, setPromptForm] = useState(false);
   const [login, setLogin] = useState(false);
-  const hasApiKey = useSelector((state: any) => state.apiKey.hasApiKey);
+  const hasApiKey = useApiStore((state) => state.apiKeyStatus);
 
   useEffect(() => {
     const name = searchParams.get("name");

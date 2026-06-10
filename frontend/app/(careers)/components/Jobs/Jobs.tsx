@@ -6,8 +6,8 @@ import JobMenu from "./JobMenu";
 import api from "@/app/helpers/api";
 import { JobDetails } from "./types";
 import { getLoginStatus } from "@/app/helpers/auth";
-import { useSelector } from "react-redux";
 import { showModal } from "@/app/helpers/modal-manager";
+import { useApiStore } from "@/store";
 
 export default function Jobs({
   jobName,
@@ -28,8 +28,7 @@ export default function Jobs({
     career_scope: "",
     resources: [],
   });
-
-  const hasApiKey = useSelector((state: any) => state.apiKey.hasApiKey);
+  const hasApiKey = useApiStore((state) => state.apiKeyStatus);
 
   useEffect(() => {
     const fetchLoginStatus = async () => {

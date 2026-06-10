@@ -2,8 +2,8 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import api from "@/app/helpers/api";
-import { useSelector } from "react-redux";
 import { JobType } from "./types";
+import { useApiStore } from "@/store";
 
 export default function JobCard({
   job,
@@ -12,7 +12,7 @@ export default function JobCard({
   job: JobType;
   saveStatus: boolean;
 }) {
-  const hasApiKey = useSelector((state: any) => state.apiKey.hasApiKey);
+  const hasApiKey = useApiStore((state) => state.apiKeyStatus);
   const isLogin = Boolean(Cookies.get("token"));
   const [saved, isSaved] = useState(false);
 

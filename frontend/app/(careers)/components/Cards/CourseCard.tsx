@@ -2,7 +2,6 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import api from "@/app/helpers/api";
-import { useSelector } from "react-redux";
 import { CourseType } from "./types";
 
 export default function CourseCard({

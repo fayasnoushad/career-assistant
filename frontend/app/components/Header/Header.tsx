@@ -4,13 +4,28 @@ import ThemeDropdown from "./ThemeDropdown";
 import { useEffect, useState } from "react";
 import UserDetails from "./UserDetails";
 import { getLoginStatus } from "@/app/helpers/auth";
+import api from "@/app/helpers/api";
+import { useApiStore } from "@/store";
+import Cookies from "js-cookie";
 
 export default function Header() {
   const [loginStatus, setLoginStatus] = useState(false);
+  const setApiKeyStatus = useApiStore((state) => state.setApiKeyStatus);
+
+  const fetchApiStatus = async () => {
+    try {
+      const response = await api.post("/auth/details/");
+      const user = response.data;
+      setApiKeyStatus(Boolean(user?.gemini_api));
+    } catch (e: any) {
+      if (e?.status === 404) Cookies.remove("token");
+    }
+  };
 
   useEffect(() => {
     const runCheck = async () => {
       const loggedIn = await getLoginStatus();
+      if (loggedIn) fetchApiStatus();
       setLoginStatus(loggedIn);
     };
     runCheck();

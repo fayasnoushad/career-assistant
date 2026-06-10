@@ -1,16 +1,16 @@
 "use client";
 import api from "../helpers/api";
-import { useDispatch } from "react-redux";
-import { setHasApiKey } from "@/store/slices/apiKeySlice";
 import React, { useEffect, useState } from "react";
 import { showModal } from "@/app/helpers/modal-manager";
+import { useApiStore } from "@/store";
 
 export default function Settings() {
   const [fName, setFName] = useState("");
   const [lName, setLName] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [careerGoal, setCareerGoal] = useState("");
-  const dispatch = useDispatch();
+
+  const setHasApiKey = useApiStore((state) => state.setApiKeyStatus);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +33,7 @@ export default function Settings() {
       gemini_api: apiKey,
     };
     await api.patch("/auth/update/", data);
-    dispatch(setHasApiKey(apiKey.length > 0));
+    setHasApiKey(apiKey.length > 0);
     showModal({
       title: "Success",
       message: "Settings updated successfully!",

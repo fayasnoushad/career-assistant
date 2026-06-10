@@ -1,6 +1,5 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import Providers from "@/store/provider";
 import { ThemeProvider } from "next-themes";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer";
@@ -25,7 +24,7 @@ export default function RootLayout({
           enableSystem={true}
         >
           <Header />
-          <Providers>{children}</Providers>
+          {children}
           <Footer />
           <UniversalModal />
         </ThemeProvider>
