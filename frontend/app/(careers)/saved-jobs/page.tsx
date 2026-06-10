@@ -1,37 +1,36 @@
 "use client";
-import { useEffect, useState } from "react";
+
 import Link from "next/link";
-import { getLoginStatus } from "@/app/helpers/auth";
 import Cards from "../components/Cards/Cards";
 import Loading from "@/app/loading";
 import api from "@/app/helpers/api";
+import { useAuthStore } from "@/store";
+import { JobType } from "../components/Cards/types";
+import { useQuery } from "@tanstack/react-query";
 
 export default function SavedJobs() {
-    const [job, setjob] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [loginStatus, setLoginStatus] = useState(false);
+    const loginStatus = useAuthStore((state) => state.loginStatus);
 
-    useEffect(() => {
-        const fetchJobs = async () => {
-            setLoading(true);
-            const loggedIn = await getLoginStatus();
-            setLoginStatus(loggedIn);
-            if (!loggedIn) {
-                setLoading(false);
-                return;
-            }
-            const response = await api.get("/jobs/saved_jobs/");
-            setjob(response.data.jobs);
-            setTimeout(() => setLoading(false), 500);
-        };
-        fetchJobs();
-    }, []);
+    const fetchJobs = async () => {
+        const response = await api.get("/courses/saved_jobs/");
+        return response.data.jobs as JobType[];
+    };
+
+    const {
+        data: jobs,
+        isPending,
+        isSuccess,
+    } = useQuery({
+        queryKey: ["saved-jobs"],
+        queryFn: fetchJobs,
+        staleTime: 5 * 60 * 1000,
+    });
 
     return (
         <main className="flex flex-col items-center pb-10">
             <h3 className="font-bold text-2xl my-10">Saved Jobs</h3>
-            {loading && <Loading />}
-            {!loading && !loginStatus && (
+            {isPending && <Loading />}
+            {isSuccess && !loginStatus && (
                 <div className="text-center text-base-content/70">
                     <p className="mb-4">
                         Login to save roadmaps, courses, jobs, and resumes.
@@ -44,10 +43,10 @@ export default function SavedJobs() {
                     </Link>
                 </div>
             )}
-            {!loading && loginStatus && job && job.length > 0 && (
-                <Cards type="job" content={job} saved={true} />
+            {isSuccess && loginStatus && jobs && jobs.length > 0 && (
+                <Cards type="job" content={jobs} saved={true} />
             )}
-            {!loading && loginStatus && job.length === 0 && "No job saved!"}
+            {isSuccess && loginStatus && jobs.length === 0 && "No job saved!"}
         </main>
     );
 }

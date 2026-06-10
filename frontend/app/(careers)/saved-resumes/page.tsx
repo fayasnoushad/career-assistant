@@ -4,8 +4,9 @@ import api from "@/app/helpers/api";
 import Loading from "@/app/loading";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { getLoginStatus } from "@/app/helpers/auth";
 import { showModal } from "@/app/helpers/modal-manager";
+import { useAuthStore } from "@/store";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface SkillGap {
     skill: string;
@@ -33,36 +34,35 @@ interface ResumeAnalysis {
 }
 
 export default function SavedResumes() {
-    const [analyses, setAnalyses] = useState<ResumeAnalysis[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [loginStatus, setLoginStatus] = useState(false);
     const router = useRouter();
+    const queryClient = useQueryClient();
+    const loginStatus = useAuthStore((state) => state.loginStatus);
 
-    useEffect(() => {
-        const fetchAnalyses = async () => {
-            setLoading(true);
-            const loggedIn = await getLoginStatus();
-            setLoginStatus(loggedIn);
-            if (!loggedIn) {
-                setLoading(false);
-                return;
-            }
-            try {
-                const response = await api.get("/resumes/");
-                setAnalyses(response.data.analyses);
-            } catch (error) {
-                showModal({
-                    title: "Error",
-                    message: "Failed to fetch analyses",
-                    type: "error",
-                    onConfirm: () => {},
-                });
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchAnalyses();
-    }, []);
+    const fetchAnalyses = async () => {
+        const response = await api.get("/resumes/");
+        return response.data.analyses as ResumeAnalysis[];
+    };
+
+    const {
+        data: analyses,
+        isPending,
+        isSuccess,
+        isError,
+        error,
+    } = useQuery({
+        queryKey: ["saved-courses"],
+        queryFn: fetchAnalyses,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    if (isError) {
+        showModal({
+            title: "Error",
+            message: "Failed to fetch analyses",
+            type: "error",
+            onConfirm: () => {},
+        });
+    }
 
     const handleDelete = (id: string) => {
         showModal({
@@ -72,7 +72,13 @@ export default function SavedResumes() {
             onConfirm: async () => {
                 try {
                     await api.delete(`/resumes/${id}`);
-                    setAnalyses(analyses.filter((a) => a.id !== id));
+                    queryClient.setQueryData<ResumeAnalysis[]>(
+                        ["saved-analyses"],
+                        (prevAnalyses) =>
+                            prevAnalyses?.filter(
+                                (resume) => resume.id !== id,
+                            ) ?? [],
+                    );
                 } catch (error) {
                     showModal({
                         title: "Error",
@@ -140,9 +146,9 @@ export default function SavedResumes() {
                 Saved Resume Analyses
             </h3>
 
-            {loading && <Loading />}
+            {isPending && <Loading />}
 
-            {!loading && !loginStatus && (
+            {isSuccess && !loginStatus && (
                 <div className="text-center text-base-content/70">
                     <p className="mb-4">
                         Login to save roadmaps, courses, jobs, and resumes.
@@ -156,7 +162,7 @@ export default function SavedResumes() {
                 </div>
             )}
 
-            {!loading && loginStatus && analyses.length === 0 && (
+            {isSuccess && loginStatus && analyses.length === 0 && (
                 <div className="text-center text-base-content/70">
                     <p className="mb-4">No resume analyses saved yet!</p>
                     <button
@@ -168,7 +174,7 @@ export default function SavedResumes() {
                 </div>
             )}
 
-            {!loading && loginStatus && analyses.length > 0 && (
+            {isSuccess && loginStatus && analyses.length > 0 && (
                 <div className="w-full max-w-4xl space-y-4">
                     {analyses.map((analysis) => (
                         <div

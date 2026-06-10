@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import api from "@/app/helpers/api";
 import Loading from "@/app/loading";
 import ResumeUploadForm from "./components/ResumeUploadForm";
 import ResumeAnalysisDisplay from "./components/ResumeAnalysisDisplay";
-import { getLoginStatus } from "@/app/helpers/auth";
+import { useAuthStore } from "@/store";
 
 interface SkillGap {
     skill: string;
@@ -36,15 +36,7 @@ export default function ResumePage() {
     const [analysis, setAnalysis] = useState<ResumeAnalysis | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [loginStatus, setLoginStatus] = useState(false);
-
-    useEffect(() => {
-        const runCheck = async () => {
-            const loggedIn = await getLoginStatus();
-            setLoginStatus(loggedIn);
-        };
-        runCheck();
-    }, []);
+    const loginStatus = useAuthStore((state) => state.loginStatus);
 
     const handleUpload = async (
         file: File,

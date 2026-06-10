@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import api from "../../helpers/api";
 import Loading from "@/app/loading";
 
@@ -15,31 +15,24 @@ interface DashboardData {
 }
 
 export default function Dashboard() {
-    const [data, setData] = useState<DashboardData | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const fetchDashboardData = async () => {
+        try {
+            const response = await api.get("/dashboard/");
+            return response.data as DashboardData;
+        } catch (err: any) {
+            throw Error(
+                err.response?.data?.detail || "Failed to load dashboard data",
+            );
+        }
+    };
 
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            try {
-                setLoading(true);
-                const response = await api.get("/dashboard/");
-                setData(response.data);
-                setError(null);
-            } catch (err: any) {
-                setError(
-                    err.response?.data?.detail ||
-                        "Failed to load dashboard data",
-                );
-            } finally {
-                setLoading(false);
-            }
-        };
+    const { data, isPending, isError, error } = useQuery({
+        queryKey: ["dashboard"],
+        queryFn: fetchDashboardData,
+        staleTime: 5 * 60 * 1000,
+    });
 
-        fetchDashboardData();
-    }, []);
-
-    if (loading) {
+    if (isPending) {
         return (
             <main className="min-h-screen flex flex-row justify-center items-center">
                 <Loading />
@@ -47,14 +40,14 @@ export default function Dashboard() {
         );
     }
 
-    if (error) {
+    if (isError) {
         return (
-            <div className="flex items-center justify-center min-h-screen">
+            <div className="flex items-center justify-center min-h-[80vh]">
                 <div className="bg-error/10 text-error p-6 rounded-2xl border border-error/20 max-w-md">
                     <h3 className="text-lg font-bold mb-2">
                         Error Loading Dashboard
                     </h3>
-                    <p>{error}</p>
+                    <p>{error.message}</p>
                 </div>
             </div>
         );

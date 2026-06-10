@@ -5,11 +5,12 @@ import { useEffect, useState } from "react";
 import UserDetails from "./UserDetails";
 import { getLoginStatus } from "@/app/helpers/auth";
 import api from "@/app/helpers/api";
-import { useApiStore } from "@/store";
+import { useApiStore, useAuthStore } from "@/store";
 import Cookies from "js-cookie";
 
 export default function Header() {
-    const [loginStatus, setLoginStatus] = useState(false);
+    const loginStatus = useAuthStore((state) => state.loginStatus);
+    const setLoginStatus = useAuthStore((state) => state.setLoginStatus);
     const setApiKeyStatus = useApiStore((state) => state.setApiKeyStatus);
 
     const fetchApiStatus = async () => {

@@ -1,18 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { getLoginStatus } from "@/app/helpers/auth";
+import { useAuthStore } from "@/store";
 
 export default function Home() {
-    const [loginStatus, setLoginStatus] = useState(false);
-
-    useEffect(() => {
-        const runCheck = async () => {
-            const loggedIn = await getLoginStatus();
-            setLoginStatus(loggedIn);
-        };
-        runCheck();
-    }, []);
+    const loginStatus = useAuthStore((state) => state.loginStatus);
 
     return (
         <main className="flex flex-col justify-center items-center text-center h-full mx-5 animate-fadeIn py-10">

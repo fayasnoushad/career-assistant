@@ -1,37 +1,35 @@
 "use client";
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getLoginStatus } from "@/app/helpers/auth";
 import Cards from "../components/Cards/Cards";
 import Loading from "@/app/loading";
 import api from "@/app/helpers/api";
+import { useAuthStore } from "@/store";
+import { useQuery } from "@tanstack/react-query";
+import { CourseType } from "../components/Cards/types";
 
 export default function SavedCourses() {
-    const [courses, setCourses] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [loginStatus, setLoginStatus] = useState(false);
+    const loginStatus = useAuthStore((state) => state.loginStatus);
 
-    useEffect(() => {
-        const fetchCourses = async () => {
-            setLoading(true);
-            const loggedIn = await getLoginStatus();
-            setLoginStatus(loggedIn);
-            if (!loggedIn) {
-                setLoading(false);
-                return;
-            }
-            const response = await api.get("/courses/saved_courses/");
-            setCourses(response.data.courses);
-            setTimeout(() => setLoading(false), 500);
-        };
-        fetchCourses();
-    }, []);
+    const fetchCourses = async () => {
+        const response = await api.get("/courses/saved_courses/");
+        return response.data.courses as CourseType[];
+    };
+
+    const {
+        data: courses,
+        isPending,
+        isSuccess,
+    } = useQuery({
+        queryKey: ["saved-courses"],
+        queryFn: fetchCourses,
+        staleTime: 5 * 60 * 1000,
+    });
 
     return (
         <main className="flex flex-col items-center pb-10">
             <h3 className="font-bold text-2xl my-10">Saved Courses</h3>
-            {loading && <Loading />}
-            {!loading && !loginStatus && (
+            {isPending && <Loading />}
+            {isSuccess && !loginStatus && (
                 <div className="text-center text-base-content/70">
                     <p className="mb-4">
                         Login to save roadmaps, courses, jobs, and resumes.
@@ -44,10 +42,10 @@ export default function SavedCourses() {
                     </Link>
                 </div>
             )}
-            {!loading && loginStatus && courses && courses.length > 0 && (
+            {isSuccess && loginStatus && courses && courses.length > 0 && (
                 <Cards type="course" content={courses} saved={true} />
             )}
-            {!loading &&
+            {isSuccess &&
                 loginStatus &&
                 courses.length === 0 &&
                 "No courses saved!"}

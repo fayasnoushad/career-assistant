@@ -5,9 +5,8 @@ import AboutJob from "./AboutJob";
 import JobMenu from "./JobMenu";
 import api from "@/app/helpers/api";
 import { JobDetails } from "./types";
-import { getLoginStatus } from "@/app/helpers/auth";
 import { showModal } from "@/app/helpers/modal-manager";
-import { useApiStore } from "@/store";
+import { useApiStore, useAuthStore } from "@/store";
 
 export default function Jobs({
     jobName,
@@ -19,7 +18,6 @@ export default function Jobs({
     const [menuSelected, setMenuSelected] = useState<"jobList" | "about">(
         "jobList",
     );
-    const [loginStatus, setLoginStatus] = useState(false);
     const [jobDetails, setJobDetails] = useState<JobDetails>({
         job_name: "",
         description: "",
@@ -28,15 +26,8 @@ export default function Jobs({
         career_scope: "",
         resources: [],
     });
-    const hasApiKey = useApiStore((state) => state.apiKeyStatus);
-
-    useEffect(() => {
-        const fetchLoginStatus = async () => {
-            const login = await getLoginStatus();
-            setLoginStatus(login);
-        };
-        fetchLoginStatus();
-    }, []);
+    const loginStatus = useAuthStore((state) => state.loginStatus);
+    const apiKeyStatus = useApiStore((state) => state.apiKeyStatus);
 
     useEffect(() => {
         // used to make effect effect StrictMode-safe.
@@ -59,12 +50,13 @@ export default function Jobs({
                     });
             }
         };
-        if (jobName.length > 0 && loginStatus && hasApiKey) fetchJobDetails();
+        if (jobName.length > 0 && loginStatus && apiKeyStatus)
+            fetchJobDetails();
     }, [jobName, loginStatus]);
 
     return (
         <>
-            {loginStatus && hasApiKey && (
+            {loginStatus && apiKeyStatus && (
                 <JobMenu
                     menuSelected={menuSelected}
                     setMenuSelected={setMenuSelected}

@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import Cookies from "js-cookie";
 import api from "@/app/helpers/api";
 import PromptForm from "./PromptForm";
 import SelectForm from "./SelectForm";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { showModal } from "@/app/helpers/modal-manager";
-import { useApiStore } from "@/store";
+import { useApiStore, useAuthStore } from "@/store";
 
 type Props = {
     setJobName: Dispatch<SetStateAction<string>>;
@@ -34,8 +33,9 @@ export default function Form({
     const pathname = usePathname();
 
     const [promptForm, setPromptForm] = useState(false);
-    const [login, setLogin] = useState(false);
-    const hasApiKey = useApiStore((state) => state.apiKeyStatus);
+
+    const loginStatus = useAuthStore((state) => state.loginStatus);
+    const apiKeyStatus = useApiStore((state) => state.apiKeyStatus);
 
     useEffect(() => {
         const name = searchParams.get("name");
@@ -46,11 +46,6 @@ export default function Form({
             );
             router.replace(pathname);
         }
-    }, []);
-
-    useEffect(() => {
-        const token = Cookies.get("token");
-        if (token) setLogin(true);
     }, []);
 
     useEffect(() => {
@@ -104,9 +99,9 @@ export default function Form({
                 <p>Discover jobs and courses tailored to your interests</p>
                 <div className="divider my-2"></div>
                 {promptForm ? (
-                    hasApiKey ? (
+                    apiKeyStatus ? (
                         <PromptForm submitForm={handleSubmit} />
-                    ) : login ? (
+                    ) : loginStatus ? (
                         <div className="my-6 p-6 bg-base-200 rounded-2xl border border-purple-500/20">
                             <span className="text-base-content/80">
                                 You need to add an API key in{" "}

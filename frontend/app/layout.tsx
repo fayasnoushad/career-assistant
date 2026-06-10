@@ -4,6 +4,8 @@ import { ThemeProvider } from "next-themes";
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer";
 import UniversalModal from "./components/UniversalModal";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Providers from "@/lib/provider";
 
 export const metadata: Metadata = {
     title: "Career Assistant",
@@ -15,19 +17,22 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    const queryClient = new QueryClient();
     return (
         <html lang="en" suppressHydrationWarning>
             <body>
-                <ThemeProvider
-                    attribute="data-theme"
-                    defaultTheme="system"
-                    enableSystem={true}
-                >
-                    <Header />
-                    {children}
-                    <Footer />
-                    <UniversalModal />
-                </ThemeProvider>
+                <Providers>
+                    <ThemeProvider
+                        attribute="data-theme"
+                        defaultTheme="system"
+                        enableSystem={true}
+                    >
+                        <Header />
+                        {children}
+                        <Footer />
+                        <UniversalModal />
+                    </ThemeProvider>
+                </Providers>
             </body>
         </html>
     );

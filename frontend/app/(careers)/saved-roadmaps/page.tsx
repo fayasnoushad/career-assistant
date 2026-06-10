@@ -2,10 +2,11 @@
 import api from "@/app/helpers/api";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getLoginStatus } from "@/app/helpers/auth";
 import Roadmap from "./components/Roadmap";
 import Loading from "@/app/loading";
 import { showModal } from "@/app/helpers/modal-manager";
+import { useAuthStore } from "@/store";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 type Roadmap = {
     id: string;
@@ -13,29 +14,50 @@ type Roadmap = {
 };
 
 export default function SavedRoadmaps() {
-    const [roadmaps, setRoadmaps] = useState<Roadmap[]>([]);
+    const loginStatus = useAuthStore((state) => state.loginStatus);
+    const queryClient = useQueryClient();
+
+    const fetchRoadmaps = async () => {
+        const response = await api.get("/courses/saved_roadmaps/");
+        return response.data.roadmaps as Roadmap[];
+    };
+
+    const {
+        data: roadmaps,
+        isPending,
+        isSuccess,
+    } = useQuery({
+        queryKey: ["saved-roadmaps"],
+        queryFn: fetchRoadmaps,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const handleDelteRoadmap = async (roadmapId: string) => {
+        await api.post("/courses/remove_roadmap/", { id: roadmapId });
+        queryClient.setQueryData<Roadmap[]>(
+            ["saved-roadmaps"],
+            (prevRoadmaps) =>
+                prevRoadmaps?.filter((roadmap) => roadmap.id !== roadmapId) ??
+                [],
+        );
+        showModal({
+            title: "Deleted",
+            message: "Roadmap removed successfully!",
+            type: "success",
+            onConfirm: () => {},
+        });
+    };
+
     const [learnedCourses, setLearnedCourses] = useState<Set<string>>(
         new Set(),
     );
-    const [loading, setLoading] = useState(true);
-    const [loginStatus, setLoginStatus] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            setLoading(true);
-            const loggedIn = await getLoginStatus();
-            setLoginStatus(loggedIn);
-            if (!loggedIn) {
-                setLoading(false);
-                return;
-            }
-            const roadmapResponse = await api.get("/courses/saved_roadmaps/");
-            setRoadmaps(roadmapResponse.data.roadmaps);
             const courseResponse = await api.get("/courses/learned_courses/");
             setLearnedCourses(new Set(courseResponse.data.courses as string[]));
-            setTimeout(() => setLoading(false), 500);
         };
-        fetchData();
+        if (loginStatus) fetchData();
     }, []);
 
     const removeRoadmap = async (roadmapId: string) => {
@@ -44,26 +66,15 @@ export default function SavedRoadmaps() {
             message:
                 "Are you sure you want to remove this roadmap? This action cannot be undone.",
             type: "confirm",
-            onConfirm: async () => {
-                await api.post("/courses/remove_roadmap/", { id: roadmapId });
-                setRoadmaps((prevRoadmaps) =>
-                    prevRoadmaps.filter((roadmap) => roadmap.id !== roadmapId),
-                );
-                showModal({
-                    title: "Deleted",
-                    message: "Roadmap removed successfully!",
-                    type: "success",
-                    onConfirm: () => {},
-                });
-            },
+            onConfirm: () => handleDelteRoadmap(roadmapId),
         });
     };
 
     return (
         <main className="flex flex-col items-center pb-10">
             <h3 className="font-bold text-2xl my-10">Saved Roadmaps</h3>
-            {loading && <Loading />}
-            {!loading && !loginStatus && (
+            {isPending && <Loading />}
+            {isSuccess && !loginStatus && (
                 <div className="text-center text-base-content/70">
                     <p className="mb-4">
                         Login to save roadmaps, courses, jobs, and resumes.
@@ -76,7 +87,7 @@ export default function SavedRoadmaps() {
                     </Link>
                 </div>
             )}
-            {!loading &&
+            {isSuccess &&
                 loginStatus &&
                 roadmaps.map((roadmap) => (
                     <Roadmap

@@ -36,7 +36,7 @@ export default function CourseCard({
                     <span>
                         <b>Channel:</b>{" "}
                         <Link
-                            href={course.channel_link}
+                            href={course.channel_link ?? ""}
                             target="_blank"
                             className="text-purple-600 hover:text-purple-700 font-medium underline"
                         >
@@ -47,15 +47,13 @@ export default function CourseCard({
                 <div className="flex items-center gap-2">
                     <span className="text-lg">⏱️</span>
                     <span>
-                        <b>Duration:</b>{" "}
-                        {course.duration ? course.duration : "Not specified"}
+                        <b>Duration:</b> {course.duration ?? "Not specified"}
                     </span>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className="text-lg">📊</span>
                     <span>
-                        <b>Level:</b>{" "}
-                        {course.level ? course.level : "Not specified"}
+                        <b>Level:</b> {course.level ?? "Not specified"}
                     </span>
                 </div>
             </div>
@@ -87,7 +85,7 @@ export default function CourseCard({
                     </button>
                 )}
                 <Link
-                    href={course.link}
+                    href={course.link ?? ""}
                     target="_blank"
                     className="btn btn-sm md:btn-md bg-linear-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0 rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
                 >
