@@ -1,4 +1,5 @@
 "use client";
+
 import api from "../helpers/api";
 import React, { useEffect, useState } from "react";
 import { showModal } from "@/app/helpers/modal-manager";
@@ -10,7 +11,7 @@ export default function Settings() {
     const [apiKey, setApiKey] = useState("");
     const [careerGoal, setCareerGoal] = useState("");
 
-    const setHasApiKey = useApiStore((state) => state.setApiKeyStatus);
+    const setApiKeyStatus = useApiStore((state) => state.setApiKeyStatus);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -35,7 +36,7 @@ export default function Settings() {
             gemini_api: apiKey,
         };
         await api.patch("/auth/update/", data);
-        setHasApiKey(apiKey.length > 0);
+        setApiKeyStatus(apiKey.length > 0);
         showModal({
             title: "Success",
             message: "Settings updated successfully!",

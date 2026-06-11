@@ -1,4 +1,5 @@
 "use client";
+
 import { Suspense, useState } from "react";
 import Form from "../components/Form/Form";
 import Cards from "../components/Cards/Cards";

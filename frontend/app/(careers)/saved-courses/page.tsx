@@ -1,4 +1,5 @@
 "use client";
+
 import Link from "next/link";
 import Cards from "../components/Cards/Cards";
 import Loading from "@/app/loading";
